@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "[5968] That Hertz TeleOp", group = "TeleOp")
+@TeleOp(name = "[5968] ThatHertz TeleOp", group = "TeleOp")
 public class ThatHertzTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -20,8 +20,8 @@ public class ThatHertzTeleOp extends OpMode {
     private DcMotor collection = null;
 
     //for beacon scoring
-    //private Servo rightBeaconServo = null;
-    //private Servo leftBeaconServo = null;
+    private Servo rightBeaconServo = null;
+    private Servo leftBeaconServo = null;
 
     //code to run on init
     @Override
@@ -43,11 +43,11 @@ public class ThatHertzTeleOp extends OpMode {
         collection = hardwareMap.dcMotor.get("collection");
 
         //for beacon scoring
-        //rightBeaconServo = hardwareMap.servo.get("r_b_s");
-        //leftBeaconServo = hardwareMap.servo.get("l_b_s");
+        rightBeaconServo = hardwareMap.servo.get("r_b_s");
+        leftBeaconServo = hardwareMap.servo.get("l_b_s");
 
-        //rightBeaconServo.setPosition(0); //probably will need changing (especially left)
-        //leftBeaconServo.setPosition(0);
+        rightBeaconServo.setPosition(0); //probably will need changing (especially left)
+        leftBeaconServo.setPosition(0);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -102,18 +102,27 @@ public class ThatHertzTeleOp extends OpMode {
         }
 
         //BEACONS
-//        if(gamepad1.left_bumper) {
-//            leftBeaconServo.setPosition(Math.abs(leftBeaconServo.getPosition() - 1));
-//        } else if(gamepad1.right_bumper) {
-//            rightBeaconServo.setPosition(Math.abs(rightBeaconServo.getPosition() - 1));
+//        if(gamepad1.left_stick_button && (leftBeaconServo.getPosition() != .75 || leftBeaconServo.getPosition() != 0)) {
+//            leftBeaconServo.setPosition(Math.abs(leftBeaconServo.getPosition() - .75));
+//        } else if(gamepad1.right_stick_button && (rightBeaconServo.getPosition() != .75 || rightBeaconServo.getPosition() != 0)) {
+//            rightBeaconServo.setPosition(Math.abs(rightBeaconServo.getPosition() - .75));
 //        }
-
+        if(gamepad1.right_stick_button) {
+            rightBeaconServo.setPosition(.75);
+        } else if(gamepad1.left_stick_button) {
+            leftBeaconServo.setPosition(.75);
+        }
+        if(gamepad1.right_stick_button && rightBeaconServo.getPosition() == .75) {
+            rightBeaconServo.setPosition(0);
+        } else if(gamepad1.left_stick_button && leftBeaconServo.getPosition() == .75) {
+            leftBeaconServo.setPosition(0);
+        }
         telemetry.addData("FLM Power", frontLeftMotor.getPower());
         telemetry.addData("FRM Power", frontRightMotor.getPower());
         telemetry.addData("BLM Power", backLeftMotor.getPower());
         telemetry.addData("BRM Power", backRightMotor.getPower());
         telemetry.addData("Collection Power", collection.getPower());
-//        telemetry.addData("LS Position", leftBeaconServo.getPosition());
-//        telemetry.addData("RS Position", rightBeaconServo.getPosition());
+        telemetry.addData("LS Position", leftBeaconServo.getPosition());
+        telemetry.addData("RS Position", rightBeaconServo.getPosition());
     }
 }

@@ -12,14 +12,14 @@ import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
-import java.util.HashMap;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
  * Created by Sa'id on 12/1/2016.
  */
 
-@Autonomous(name = "[5968] That Hertz Autonomous", group = "Autonomous")
+@Disabled
+@Autonomous(name = "[5968] ThatHertz Autonomous", group = "Autonomous")
 
 public class ThatHertzAutonomous extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
@@ -58,9 +58,8 @@ public class ThatHertzAutonomous extends OpMode {
     private Servo leftBeaconServo = null;
 
     private String CURRENT_DIRECTORY = "org.firstinspires.ftc.teamcode";
-    private String OP_QUE[] = {
-
-                              };
+//    private String OP_QUE[] = {
+//                              };
 
     @Override
     public void init() {
