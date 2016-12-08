@@ -40,15 +40,20 @@ public class ThatHertzSensorTest extends OpMode {
     private DeviceInterfaceModule dim = null;
 
     //for color sensor
-    private ColorSensor color = null;
-    static final int LED_CHANNEL = 5;
-    float hsvValues[] = {0F,0F,0F};
+//    private ColorSensor color = null;
+//    static final int LED_CHANNEL = 5;
+//    float hsvValues[] = {0F,0F,0F};
 
     //for wheels
     private DcMotor frontLeftMotor = null;
     private DcMotor frontRightMotor = null;
     private DcMotor backLeftMotor = null;
     private DcMotor backRightMotor = null;
+
+    //for autonomous loop
+    private boolean foundBack = false;
+    private boolean foundFront = false;
+    private boolean hitBeaconOne = false;
 
     @Override
     public void init() {
@@ -63,8 +68,8 @@ public class ThatHertzSensorTest extends OpMode {
         dim = hardwareMap.deviceInterfaceModule.get("d_i_m");
 
         //for color sensor
-        color = hardwareMap.colorSensor.get("color");
-        dim.setDigitalChannelMode(LED_CHANNEL, DigitalChannelController.Mode.OUTPUT);
+//        color = hardwareMap.colorSensor.get("color");
+//        dim.setDigitalChannelMode(LED_CHANNEL, DigitalChannelController.Mode.OUTPUT);
 
         //for light sensors
         backLightSensor = hardwareMap.lightSensor.get("b_light");
@@ -83,51 +88,74 @@ public class ThatHertzSensorTest extends OpMode {
     @Override
     public void start() {runtime.reset();}
 
+    public boolean findStripeBack() {
+        if (backLightSensor.getRawLightDetected() < 1.15) {
+            backLeftMotor.setPower(.2);
+            backRightMotor.setPower(.2);
+            frontLeftMotor.setPower(.2);
+        } else if(backLightSensor.getRawLightDetected() >= 1.15) {
+            backLeftMotor.setPower(0);
+            backRightMotor.setPower(0);
+            frontLeftMotor.setPower(0);
+            frontRightMotor.setPower(0);
+            return true;
+        }
+        return false;
+    }
+    public boolean findStripeFront() {
+        if(frontLightSensor.getRawLightDetected() < .75) {
+            frontRightMotor.setPower(.2);
+            backRightMotor.setPower(.2);
+            backLeftMotor.setPower(-.2);
+            backRightMotor.setPower(-.2);
+        }
+        if(frontLightSensor.getRawLightDetected() >= .75) {
+            frontRightMotor.setPower(0);
+            backRightMotor.setPower(0);
+            backLeftMotor.setPower(0);
+            backRightMotor.setPower(0);
+            return true;
+        }
+        return false;
+    }
+    public boolean hitBeacon(){
+        if(ultrasonicLeft.getUltrasonicLevel() < 120) {
+            frontRightMotor.setPower(.2);
+            frontLeftMotor.setPower(.2);
+            backLeftMotor.setPower(.2);
+            backRightMotor.setPower(.2);
+        }
+        if(ultrasonicLeft.getUltrasonicLevel() >= 120) {
+            frontRightMotor.setPower(0);
+            frontLeftMotor.setPower(0);
+            backLeftMotor.setPower(0);
+            backLeftMotor.setPower(0);
+            return true;
+        }
+        return false;
+    }
+
 
     @Override
     public void loop() {
-//        boolean notForward = true;
-//        boolean notTurned = true;
-//        boolean notNearBeacon = true;
-
-//        if (notForward) {
-//            ultrasonicDifference = ultrasonicRight.getUltrasonicLevel() - ultrasonicLeft.getUltrasonicLevel();
-//            if (Math.abs(ultrasonicDifference) < 5 && ultrasonicRight.getUltrasonicLevel() < 61) {
-//                frontLeftMotor.setPower(.1);
-//                frontRightMotor.setPower(.1);
-//                backRightMotor.setPower(.1);
-//                backLeftMotor.setPower(.1);
-//            } else if (ultrasonicDifference >= 5) {
-//                backLeftMotor.setPower(.05);
-//                frontLeftMotor.setPower(.05);
-//                frontRightMotor.setPower(-.05);
-//                backRightMotor.setPower(-.05);
-//            } else if (ultrasonicDifference <= -5) {
-//                backLeftMotor.setPower(-.05);
-//                frontLeftMotor.setPower(-.05);
-//                frontRightMotor.setPower(.05);
-//                backRightMotor.setPower(.05);
-//            } else {
-//                backLeftMotor.setPower(0);
-//                frontLeftMotor.setPower(0);
-//                frontRightMotor.setPower(-0);
-//                backRightMotor.setPower(-0);
-//                notForward = false;
-//            }
-//        }
-
-//       if(notTurned) {
-//
-//      }
+        if(!foundBack) {
+            foundBack = findStripeBack();
+        }
+        if(foundBack && !foundFront) {
+            foundFront = findStripeFront();
+        }
+         if(foundFront && foundBack && !hitBeaconOne) {
+            hitBeaconOne = hitBeacon();
+        }
 
         telemetry.addData("Back Light: Raw", backLightSensor.getRawLightDetected() + "");
         telemetry.addData("Back Light: Normal", backLightSensor.getLightDetected() + "");
         telemetry.addData("Front Light: Raw", frontLightSensor.getRawLightDetected() + "");
         telemetry.addData("Front Light: Normal", frontLightSensor.getLightDetected() + "");
-        telemetry.addData("Color: Clear", color.alpha() + "");
-        telemetry.addData("Color: Red  ", color.red() + "");
-        telemetry.addData("Color: Green", color.green() + "");
-        telemetry.addData("Color: Blue ", color.blue() + "");
+//        telemetry.addData("Color: Clear", color.alpha() + "");
+//        telemetry.addData("Color: Red  ", color.red() + "");
+//        telemetry.addData("Color: Green", color.green() + "");
+//        telemetry.addData("Color: Blue ", color.blue() + "");
         telemetry.addData("Ultrasonic Sensor Left", ultrasonicLeft.getUltrasonicLevel() + "");
         telemetry.addData("Ultrasonic Sensor Right", ultrasonicRight.getUltrasonicLevel() + "");
         telemetry.addData("Ultrasonic Difference", ultrasonicDifference + "");
