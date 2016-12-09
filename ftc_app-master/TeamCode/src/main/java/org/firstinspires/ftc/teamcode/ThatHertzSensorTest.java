@@ -33,7 +33,7 @@ public class ThatHertzSensorTest extends OpMode {
 
     //for ultrasonic sensors
     private UltrasonicSensor ultrasonicLeft = null;
-    private UltrasonicSensor ultrasonicRight = null;
+//    private UltrasonicSensor ultrasonicRight = null;
     private double ultrasonicDifference = 0.0;
 
     //for I2C sensors
@@ -59,7 +59,7 @@ public class ThatHertzSensorTest extends OpMode {
     public void init() {
         //for ultrasonic sensors
         ultrasonicLeft = hardwareMap.ultrasonicSensor.get("ultrasonic_l");
-        ultrasonicRight = hardwareMap.ultrasonicSensor.get("ultrasonic_r");
+//        ultrasonicRight = hardwareMap.ultrasonicSensor.get("ultrasonic_r");
         legacy = hardwareMap.legacyModule.get("legacy");
         legacy.enable9v(4, true); //these two ports must have 9 volts
         legacy.enable9v(5, true); //to make sure that ultrasonics work
@@ -89,41 +89,43 @@ public class ThatHertzSensorTest extends OpMode {
     public void start() {runtime.reset();}
 
     public boolean findStripeBack() {
-        if (backLightSensor.getRawLightDetected() < 1.15) {
-            backLeftMotor.setPower(.2);
-            backRightMotor.setPower(.2);
-            frontLeftMotor.setPower(.2);
-        } else if(backLightSensor.getRawLightDetected() >= 1.15) {
+        if(backLightSensor.getRawLightDetected() >= 1.15) {
             backLeftMotor.setPower(0);
             backRightMotor.setPower(0);
             frontLeftMotor.setPower(0);
             frontRightMotor.setPower(0);
             return true;
         }
+        else {
+            backLeftMotor.setPower(.1);
+            backRightMotor.setPower(.1);
+            frontLeftMotor.setPower(.1);
+            frontRightMotor.setPower(.1);
+        }
         return false;
     }
     public boolean findStripeFront() {
-        if(frontLightSensor.getRawLightDetected() < .75) {
-            frontRightMotor.setPower(.2);
-            backRightMotor.setPower(.2);
-            backLeftMotor.setPower(-.2);
-            backRightMotor.setPower(-.2);
-        }
-        if(frontLightSensor.getRawLightDetected() >= .75) {
+        if(frontLightSensor.getRawLightDetected() >= 1.0) {
             frontRightMotor.setPower(0);
             backRightMotor.setPower(0);
             backLeftMotor.setPower(0);
             backRightMotor.setPower(0);
             return true;
         }
+        else {
+            frontRightMotor.setPower(.2);
+            backRightMotor.setPower(.2);
+            backLeftMotor.setPower(-.2);
+            frontLeftMotor.setPower(-.2);
+        }
         return false;
     }
     public boolean hitBeacon(){
         if(ultrasonicLeft.getUltrasonicLevel() < 120) {
-            frontRightMotor.setPower(.2);
-            frontLeftMotor.setPower(.2);
-            backLeftMotor.setPower(.2);
-            backRightMotor.setPower(.2);
+            frontRightMotor.setPower(.1);
+            frontLeftMotor.setPower(.1);
+            backLeftMotor.setPower(.1);
+            backRightMotor.setPower(.1);
         }
         if(ultrasonicLeft.getUltrasonicLevel() >= 120) {
             frontRightMotor.setPower(0);
@@ -144,7 +146,7 @@ public class ThatHertzSensorTest extends OpMode {
         if(foundBack && !foundFront) {
             foundFront = findStripeFront();
         }
-         if(foundFront && foundBack && !hitBeaconOne) {
+        if(foundFront && foundBack && !hitBeaconOne) {
             hitBeaconOne = hitBeacon();
         }
 
@@ -157,7 +159,7 @@ public class ThatHertzSensorTest extends OpMode {
 //        telemetry.addData("Color: Green", color.green() + "");
 //        telemetry.addData("Color: Blue ", color.blue() + "");
         telemetry.addData("Ultrasonic Sensor Left", ultrasonicLeft.getUltrasonicLevel() + "");
-        telemetry.addData("Ultrasonic Sensor Right", ultrasonicRight.getUltrasonicLevel() + "");
+//        telemetry.addData("Ultrasonic Sensor Right", ultrasonicRight.getUltrasonicLevel() + "");
         telemetry.addData("Ultrasonic Difference", ultrasonicDifference + "");
     }
 }
