@@ -74,6 +74,22 @@ public class ThatHertzSensorTest extends OpMode {
         //for light sensors
         backLightSensor = hardwareMap.lightSensor.get("b_light");
         frontLightSensor = hardwareMap.lightSensor.get("f_light");
+        ultrasonicLeft = hardwareMap.ultrasonicSensor.get("ultrasonic_l");
+//        ultrasonicRight = hardwareMap.ultrasonicSensor.get("ultrasonic_r");
+        legacy = hardwareMap.legacyModule.get("legacy");
+        legacy.enable9v(4, true); //these two ports must have 9 volts
+        legacy.enable9v(5, true); //to make sure that ultrasonics work
+
+        //for DIM
+        dim = hardwareMap.deviceInterfaceModule.get("d_i_m");
+
+        //for color sensor
+//        color = hardwareMap.colorSensor.get("color");
+//        dim.setDigitalChannelMode(LED_CHANNEL, DigitalChannelController.Mode.OUTPUT);
+
+        //for light sensors
+        backLightSensor = hardwareMap.lightSensor.get("b_light");
+        frontLightSensor = hardwareMap.lightSensor.get("f_light");
 
         //for wheels
         frontLeftMotor = hardwareMap.dcMotor.get("f_l_m");
