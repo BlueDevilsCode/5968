@@ -124,5 +124,6 @@ public class ThatHertzTeleOp extends OpMode {
         telemetry.addData("Collection Power", collection.getPower());
         telemetry.addData("LS Position", leftBeaconServo.getPosition());
         telemetry.addData("RS Position", rightBeaconServo.getPosition());
+
     }
 }

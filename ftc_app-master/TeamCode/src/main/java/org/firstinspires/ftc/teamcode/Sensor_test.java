@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "[5968] ThatHertz TeleOp", group = "TeleOp")
+@TeleOp(name = "[5968] Sensor_test", group = "TeleOp")
 public class Sensor_test extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -162,5 +162,16 @@ public class Sensor_test extends OpMode {
         telemetry.addData("Collection Power", collection.getPower());
         telemetry.addData("LS Position", leftBeaconServo.getPosition());
         telemetry.addData("RS Position", rightBeaconServo.getPosition());
+        telemetry.addData("Back Light: Raw", backLightSensor.getRawLightDetected() + "");
+        telemetry.addData("Back Light: Normal", backLightSensor.getLightDetected() + "");
+        telemetry.addData("Front Light: Raw", frontLightSensor.getRawLightDetected() + "");
+        telemetry.addData("Front Light: Normal", frontLightSensor.getLightDetected() + "");
+//        telemetry.addData("Color: Clear", color.alpha() + "");
+//        telemetry.addData("Color: Red  ", color.red() + "");
+//        telemetry.addData("Color: Green", color.green() + "");
+//        telemetry.addData("Color: Blue ", color.blue() + "");
+        telemetry.addData("Ultrasonic Sensor Left", ultrasonicLeft.getUltrasonicLevel() + "");
+//        telemetry.addData("Ultrasonic Sensor Right", ultrasonicRight.getUltrasonicLevel() + "");
+        telemetry.addData("Ultrasonic Difference", ultrasonicDifference + "");
     }
 }
