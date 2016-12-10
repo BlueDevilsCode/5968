@@ -157,20 +157,22 @@ public class ThatHertzSensorTest extends OpMode {
     }
 
     public boolean hitBeacon(){
-        if(ultrasonicLeft.getUltrasonicLevel() > 7.9) {
+        if(ultrasonicLeft.getUltrasonicLevel() > 15) {
             frontRightMotor.setPower(-.1);
             frontLeftMotor.setPower(-.1);
             backLeftMotor.setPower(-.1);
             backRightMotor.setPower(-.1);
+            servoRight.setPosition(0.0);
+            servoLeft.setPosition(0.3);
         }
-        if(ultrasonicLeft.getUltrasonicLevel() <= 7.9) {
+        if(ultrasonicLeft.getUltrasonicLevel() <= 15) {
             frontRightMotor.setPower(0);
             frontLeftMotor.setPower(0);
             backLeftMotor.setPower(0);
             backLeftMotor.setPower(0);
             
-            servoRight.setPosition(0.5);
-            servoLeft.setPosition(0.5);
+            servoRight.setPosition(0.3);
+            servoLeft.setPosition(0.0);
             return true;
         }
         return false;
