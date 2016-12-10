@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.LegacyModule;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -44,15 +45,18 @@ public class ThatHertzSensorTest extends OpMode {
     private DeviceInterfaceModule dim = null;
 
     //for color sensor
-//    private ColorSensor color = null;
-//    static final int LED_CHANNEL = 5;
-//    float hsvValues[] = {0F,0F,0F};
+    private ColorSensor color = null;
+    static final int LED_CHANNEL = 5;
+    float hsvValues[] = {0F,0F,0F};
 
     //for wheels
     private DcMotor frontLeftMotor = null;
     private DcMotor frontRightMotor = null;
     private DcMotor backLeftMotor = null;
     private DcMotor backRightMotor = null;
+
+    private Servo servoRight = null;
+    private Servo servoLeft = null;
 
     //for autonomous loop
     private boolean foundBack = false;
@@ -72,8 +76,8 @@ public class ThatHertzSensorTest extends OpMode {
         dim = hardwareMap.deviceInterfaceModule.get("d_i_m");
 
         //for color sensor
-//        color = hardwareMap.colorSensor.get("color");
-//        dim.setDigitalChannelMode(LED_CHANNEL, DigitalChannelController.Mode.OUTPUT);
+        color = hardwareMap.colorSensor.get("color");
+        dim.setDigitalChannelMode(LED_CHANNEL, DigitalChannelController.Mode.OUTPUT);
 
         //for light sensors
         backLightSensor = hardwareMap.lightSensor.get("b_light");
@@ -88,8 +92,8 @@ public class ThatHertzSensorTest extends OpMode {
         dim = hardwareMap.deviceInterfaceModule.get("d_i_m");
 
         //for color sensor
-//        color = hardwareMap.colorSensor.get("color");
-//        dim.setDigitalChannelMode(LED_CHANNEL, DigitalChannelController.Mode.OUTPUT);
+        color = hardwareMap.colorSensor.get("color");
+        dim.setDigitalChannelMode(LED_CHANNEL, DigitalChannelController.Mode.OUTPUT);
 
         //for light sensors
         backLightSensor = hardwareMap.lightSensor.get("b_light");
@@ -103,6 +107,10 @@ public class ThatHertzSensorTest extends OpMode {
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
+        //for servos
+        servoRight = hardwareMap.servo.get("servoRight");
+        servoLeft = hardwareMap.servo.get("servoLeft");
+
         GRAY_COLOR_CONSTANT_FRONT = frontLightSensor.getRawLightDetected();
         WHITE_COLOR_CONSTANT_FRONT = GRAY_COLOR_CONSTANT_FRONT + .15;
         GRAY_COLOR_CONSTANT_BACK = backLightSensor.getRawLightDetected();
@@ -114,22 +122,6 @@ public class ThatHertzSensorTest extends OpMode {
     @Override
     public void start() {runtime.reset();}
 
-    public boolean findStripeBack() {
-        if(backLightSensor.getRawLightDetected() >= WHITE_COLOR_CONSTANT_BACK) {
-            backLeftMotor.setPower(0);
-            backRightMotor.setPower(0);
-            frontLeftMotor.setPower(0);
-            frontRightMotor.setPower(0);
-            return true;
-        }
-        else {
-            frontRightMotor.setPower(-.2);
-            backRightMotor.setPower(-.2);
-            backLeftMotor.setPower(.2);
-            frontLeftMotor.setPower(.2);
-        }
-        return false;
-    }
     public boolean findStripeFront() {
         if(frontLightSensor.getRawLightDetected() >= WHITE_COLOR_CONSTANT_FRONT) {
             frontRightMotor.setPower(0);
@@ -139,25 +131,46 @@ public class ThatHertzSensorTest extends OpMode {
             return true;
         }
         else {
-            backLeftMotor.setPower(-.1);
-            backRightMotor.setPower(-.1);
-            frontLeftMotor.setPower(-.1);
-            frontRightMotor.setPower(-.1);
+            backLeftMotor.setPower(-.07);
+            backRightMotor.setPower(-.07);
+            frontLeftMotor.setPower(-.07);
+            frontRightMotor.setPower(-.07);
         }
         return false;
     }
-    public boolean hitBeacon(){
-        if(ultrasonicLeft.getUltrasonicLevel() < 120) {
-            frontRightMotor.setPower(.1);
-            frontLeftMotor.setPower(.1);
-            backLeftMotor.setPower(.1);
-            backRightMotor.setPower(.1);
+
+    public boolean findStripeBack() {
+        if(backLightSensor.getRawLightDetected() >= WHITE_COLOR_CONSTANT_BACK) {
+            backLeftMotor.setPower(0);
+            backRightMotor.setPower(0);
+            frontLeftMotor.setPower(0);
+            frontRightMotor.setPower(0);
+            return true;
         }
-        if(ultrasonicLeft.getUltrasonicLevel() >= 120) {
+        else {
+            frontRightMotor.setPower(.13);
+            backRightMotor.setPower(.13);
+            backLeftMotor.setPower(-.13);
+            frontLeftMotor.setPower(-.13);
+        }
+        return false;
+    }
+
+    public boolean hitBeacon(){
+        if(ultrasonicLeft.getUltrasonicLevel() > 7.9) {
+            frontRightMotor.setPower(-.1);
+            frontLeftMotor.setPower(-.1);
+            backLeftMotor.setPower(-.1);
+            backRightMotor.setPower(-.1);
+        }
+        if(ultrasonicLeft.getUltrasonicLevel() <= 7.9) {
             frontRightMotor.setPower(0);
             frontLeftMotor.setPower(0);
             backLeftMotor.setPower(0);
             backLeftMotor.setPower(0);
+            
+            servoRight.setPosition(0.5);
+            servoLeft.setPosition(0.5);
             return true;
         }
         return false;
@@ -180,10 +193,10 @@ public class ThatHertzSensorTest extends OpMode {
         telemetry.addData("Back Light: Normal", backLightSensor.getLightDetected() + "");
         telemetry.addData("Front Light: Raw", frontLightSensor.getRawLightDetected() + "");
         telemetry.addData("Front Light: Normal", frontLightSensor.getLightDetected() + "");
-//        telemetry.addData("Color: Clear", color.alpha() + "");
-//        telemetry.addData("Color: Red  ", color.red() + "");
-//        telemetry.addData("Color: Green", color.green() + "");
-//        telemetry.addData("Color: Blue ", color.blue() + "");
+        telemetry.addData("Color: Clear", color.alpha() + "");
+        telemetry.addData("Color: Red  ", color.red() + "");
+        telemetry.addData("Color: Green", color.green() + "");
+        telemetry.addData("Color: Blue ", color.blue() + "");
         telemetry.addData("Ultrasonic Sensor Left", ultrasonicLeft.getUltrasonicLevel() + "");
 //        telemetry.addData("Ultrasonic Sensor Right", ultrasonicRight.getUltrasonicLevel() + "");
         telemetry.addData("Ultrasonic Difference", ultrasonicDifference + "");
