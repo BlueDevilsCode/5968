@@ -30,6 +30,10 @@ public class ThatHertzSensorTest extends OpMode {
     //for light sensor
     private LightSensor backLightSensor = null;
     private LightSensor frontLightSensor = null;
+    private double GRAY_COLOR_CONSTANT_FRONT = 0.0;
+    private double WHITE_COLOR_CONSTANT_FRONT = 0.0;
+    private double GRAY_COLOR_CONSTANT_BACK = 0.0;
+    private double WHITE_COLOR_CONSTANT_BACK = 0.0;
 
     //for ultrasonic sensors
     private UltrasonicSensor ultrasonicLeft = null;
@@ -98,6 +102,12 @@ public class ThatHertzSensorTest extends OpMode {
         backRightMotor = hardwareMap.dcMotor.get("b_r_m");
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        GRAY_COLOR_CONSTANT_FRONT = frontLightSensor.getRawLightDetected();
+        WHITE_COLOR_CONSTANT_FRONT = GRAY_COLOR_CONSTANT_FRONT + .15;
+        GRAY_COLOR_CONSTANT_BACK = backLightSensor.getRawLightDetected();
+        WHITE_COLOR_CONSTANT_BACK = GRAY_COLOR_CONSTANT_BACK + .15;
+
     }
 
 
@@ -105,7 +115,7 @@ public class ThatHertzSensorTest extends OpMode {
     public void start() {runtime.reset();}
 
     public boolean findStripeBack() {
-        if(backLightSensor.getRawLightDetected() >= 1.15) {
+        if(backLightSensor.getRawLightDetected() >= WHITE_COLOR_CONSTANT_BACK) {
             backLeftMotor.setPower(0);
             backRightMotor.setPower(0);
             frontLeftMotor.setPower(0);
@@ -113,15 +123,15 @@ public class ThatHertzSensorTest extends OpMode {
             return true;
         }
         else {
-            backLeftMotor.setPower(.1);
-            backRightMotor.setPower(.1);
-            frontLeftMotor.setPower(.1);
-            frontRightMotor.setPower(.1);
+            frontRightMotor.setPower(-.2);
+            backRightMotor.setPower(-.2);
+            backLeftMotor.setPower(.2);
+            frontLeftMotor.setPower(.2);
         }
         return false;
     }
     public boolean findStripeFront() {
-        if(frontLightSensor.getRawLightDetected() >= 1.0) {
+        if(frontLightSensor.getRawLightDetected() >= WHITE_COLOR_CONSTANT_FRONT) {
             frontRightMotor.setPower(0);
             backRightMotor.setPower(0);
             backLeftMotor.setPower(0);
@@ -129,10 +139,10 @@ public class ThatHertzSensorTest extends OpMode {
             return true;
         }
         else {
-            frontRightMotor.setPower(.2);
-            backRightMotor.setPower(.2);
-            backLeftMotor.setPower(-.2);
-            frontLeftMotor.setPower(-.2);
+            backLeftMotor.setPower(-.1);
+            backRightMotor.setPower(-.1);
+            frontLeftMotor.setPower(-.1);
+            frontRightMotor.setPower(-.1);
         }
         return false;
     }
@@ -156,11 +166,11 @@ public class ThatHertzSensorTest extends OpMode {
 
     @Override
     public void loop() {
-        if(!foundBack) {
-            foundBack = findStripeBack();
-        }
-        if(foundBack && !foundFront) {
+        if(!foundFront) {
             foundFront = findStripeFront();
+        }
+        if(foundFront && !foundBack) {
+            foundBack = findStripeBack();
         }
         if(foundFront && foundBack && !hitBeaconOne) {
             hitBeaconOne = hitBeacon();

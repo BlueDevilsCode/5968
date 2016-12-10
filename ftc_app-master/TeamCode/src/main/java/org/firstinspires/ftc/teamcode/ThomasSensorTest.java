@@ -137,6 +137,7 @@ public class ThomasSensorTest extends OpMode {
             collection.setPower(.75);
         } else {
             collection.setPower(0);
+
         }
 
         //BEACONS
