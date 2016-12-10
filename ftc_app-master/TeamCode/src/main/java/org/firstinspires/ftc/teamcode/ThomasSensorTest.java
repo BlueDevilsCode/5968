@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "[5968] Sensor_test", group = "TeleOp")
-public class Sensor_test extends OpMode {
+@TeleOp(name = "[5968] ThomasSensorTest", group = "TeleOpTest")
+public class ThomasSensorTest extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     //for wheels
