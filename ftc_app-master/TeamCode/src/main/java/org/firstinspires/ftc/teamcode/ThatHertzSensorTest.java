@@ -62,7 +62,7 @@ public class ThatHertzSensorTest extends OpMode {
     private boolean foundBack = false;
     private boolean foundFront = false;
     private boolean hitBeaconOne = false;
-    private boolean adjust = false;
+//    private boolean adjust = false;
 
     @Override
     public void init() {
@@ -139,30 +139,34 @@ public class ThatHertzSensorTest extends OpMode {
         }
         return false;
     }
-    public boolean findStripeFrontAdjust(){
-        try {
-            Thread.sleep(5000);
-
-        }catch(Exception e) {
-
-        }
-
-        if(frontLightSensor.getRawLightDetected() >= WHITE_COLOR_CONSTANT_FRONT){
-            backLeftMotor.setPower(0);
-            backRightMotor.setPower(0);
-            frontLeftMotor.setPower(0);
-            frontRightMotor.setPower(0);
-            return true;
-        }
-        else{
-            backLeftMotor.setPower(.08);
-            backRightMotor.setPower(.08);
-            frontLeftMotor.setPower(.08);
-            frontRightMotor.setPower(.08);
-        }
-        return false;
-
-    }
+//    public boolean findStripeFrontAdjust(){
+//        frontRightMotor.setPower(0.08);
+//        backRightMotor.setPower(0.08);
+//        backLeftMotor.setPower(0.08);
+//        backRightMotor.setPower(0.08);
+//        try {
+//            Thread.sleep(1000);
+//
+//        }catch(Exception e) {
+//
+//        }
+//
+//        if(frontLightSensor.getRawLightDetected() >= WHITE_COLOR_CONSTANT_FRONT){
+//            backLeftMotor.setPower(0);
+//            backRightMotor.setPower(0);
+//            frontLeftMotor.setPower(0);
+//            frontRightMotor.setPower(0);
+//            return true;
+//        }
+//        else{
+//            backLeftMotor.setPower(.08);
+//            backRightMotor.setPower(.08);
+//            frontLeftMotor.setPower(.08);
+//            frontRightMotor.setPower(.08);
+//        }
+//        return false;
+//
+//    }
 
     public boolean findStripeBack() {
         if(backLightSensor.getRawLightDetected() >= WHITE_COLOR_CONSTANT_BACK) {
@@ -188,7 +192,7 @@ public class ThatHertzSensorTest extends OpMode {
             backLeftMotor.setPower(-.1);
             backRightMotor.setPower(-.1);
             servoRight.setPosition(0.0);
-            servoLeft.setPosition(0.2);
+            servoLeft.setPosition(0.8);
         }
         if(ultrasonicLeft.getUltrasonicLevel() <= 18) {
             frontRightMotor.setPower(0);
@@ -196,7 +200,7 @@ public class ThatHertzSensorTest extends OpMode {
             backLeftMotor.setPower(0);
             backLeftMotor.setPower(0);
             
-            servoRight.setPosition(0.2);
+            servoRight.setPosition(0.8);
             servoLeft.setPosition(0.0);
             return true;
         }
@@ -209,10 +213,7 @@ public class ThatHertzSensorTest extends OpMode {
         if(!foundFront) {
             foundFront = findStripeFront();
         }
-        if (foundFront && adjust == false){
-            adjust = findStripeFrontAdjust();
-        }
-        if(adjust == true && !foundBack) {
+        if(foundFront && !foundBack) {
             foundBack = findStripeBack();
         }
         if(foundFront && foundBack && !hitBeaconOne) {
@@ -223,10 +224,10 @@ public class ThatHertzSensorTest extends OpMode {
         telemetry.addData("Back Light: Normal", backLightSensor.getLightDetected() + "");
         telemetry.addData("Front Light: Raw", frontLightSensor.getRawLightDetected() + "");
         telemetry.addData("Front Light: Normal", frontLightSensor.getLightDetected() + "");
-        telemetry.addData("Color: Clear", color.alpha() + "");
-        telemetry.addData("Color: Red  ", color.red() + "");
-        telemetry.addData("Color: Green", color.green() + "");
-        telemetry.addData("Color: Blue ", color.blue() + "");
+        telemetry.addData("Color: Clear", color.alpha());
+        telemetry.addData("Color: Red  ", color.red());
+        telemetry.addData("Color: Green", color.green());
+        telemetry.addData("Color: Blue ", color.blue());
         telemetry.addData("Ultrasonic Sensor Left", ultrasonicLeft.getUltrasonicLevel() + "");
 //        telemetry.addData("Ultrasonic Sensor Right", ultrasonicRight.getUltrasonicLevel() + "");
         telemetry.addData("Ultrasonic Difference", ultrasonicDifference + "");
