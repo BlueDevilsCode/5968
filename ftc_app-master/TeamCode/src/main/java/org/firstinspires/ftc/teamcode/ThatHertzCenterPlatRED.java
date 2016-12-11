@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-
+@Disabled
 @Autonomous(name = "[5968] ThatHertz CenterPlat RED", group = "TeleOp")
 public class ThatHertzCenterPlatRED extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();

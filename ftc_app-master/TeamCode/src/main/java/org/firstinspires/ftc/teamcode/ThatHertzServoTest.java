@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 /**
  * Created by Sa'id on 12/9/2016.
  */
+@Disabled
 @Autonomous(name = "ThatHertzServoTest", group = "Testing")
 public class ThatHertzServoTest extends OpMode {
     ElapsedTime runtime = new ElapsedTime();

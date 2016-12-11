@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
@@ -11,14 +10,13 @@ import com.qualcomm.robotcore.hardware.LegacyModule;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * Created by Sa'id on 11/19/2016.
  */
 
-@Autonomous(name = "[5968] ThatHertz Sensor Test", group = "Test")
-public class ThatHertzSensorTest extends LinearOpMode {
+@Autonomous(name = "[5968] ThatHertz Autonomous RED", group = "Match-Ready")
+public class ThatHertzAutonomousBLUE extends LinearOpMode {
 
     //for legacy sensors
     private LegacyModule legacy = null;
@@ -84,22 +82,26 @@ public class ThatHertzSensorTest extends LinearOpMode {
             frontRightMotor.setPower(0);
             return true;
         } else {
-            frontRightMotor.setPower(.13);
-            backRightMotor.setPower(.13);
-            backLeftMotor.setPower(-.13);
-            frontLeftMotor.setPower(-.13);
+            frontRightMotor.setPower(-.13);
+            backRightMotor.setPower(-.13);
+            backLeftMotor.setPower(.13);
+            frontLeftMotor.setPower(.13);
         }
         return false;
     }
 
     public boolean findColor() {
-        if(color.red() + 100 < color.blue()) {
-            servoRight.setPosition(.75);
-            servoLeft.setPosition(0);
+        try {
+            Thread.sleep(3000);
+        } catch (Exception e) {}
+
+        if(color.blue() < color.red()) {
+            servoRight.setPosition(1);
+            servoLeft.setPosition(.75);
         }
         else {
-            servoLeft.setPosition(.75);
-            servoRight.setPosition(0);
+            servoLeft.setPosition(0);
+            servoRight.setPosition(.75);
         }
         return true;
     }
