@@ -140,6 +140,13 @@ public class ThatHertzSensorTest extends OpMode {
         return false;
     }
     public boolean findStripeFrontAdjust(){
+        try {
+            Thread.sleep(500);
+
+        }catch(Exception e) {
+            
+        }
+
         if(frontLightSensor.getRawLightDetected() >= WHITE_COLOR_CONSTANT_FRONT){
             backLeftMotor.setPower(0);
             backRightMotor.setPower(0);
@@ -176,10 +183,10 @@ public class ThatHertzSensorTest extends OpMode {
 
     public boolean hitBeacon(){
         if(ultrasonicLeft.getUltrasonicLevel() > 18) {
-            frontRightMotor.setPower(-.15);
-            frontLeftMotor.setPower(-.15);
-            backLeftMotor.setPower(-.15);
-            backRightMotor.setPower(-.15);
+            frontRightMotor.setPower(-.1);
+            frontLeftMotor.setPower(-.1);
+            backLeftMotor.setPower(-.1);
+            backRightMotor.setPower(-.1);
             servoRight.setPosition(0.0);
             servoLeft.setPosition(0.2);
         }
@@ -202,10 +209,10 @@ public class ThatHertzSensorTest extends OpMode {
         if(!foundFront) {
             foundFront = findStripeFront();
         }
-        if (foundFront && !adjust){
+        if (foundFront && adjust == false){
             adjust = findStripeFrontAdjust();
         }
-        if(adjust && !foundBack) {
+        if(adjust == true && !foundBack) {
             foundBack = findStripeBack();
         }
         if(foundFront && foundBack && !hitBeaconOne) {
