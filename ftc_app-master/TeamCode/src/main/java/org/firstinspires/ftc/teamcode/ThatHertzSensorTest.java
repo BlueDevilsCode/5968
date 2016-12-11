@@ -62,6 +62,7 @@ public class ThatHertzSensorTest extends OpMode {
     private boolean foundBack = false;
     private boolean foundFront = false;
     private boolean hitBeaconOne = false;
+    private boolean adjust = false;
 
     @Override
     public void init() {
@@ -138,6 +139,23 @@ public class ThatHertzSensorTest extends OpMode {
         }
         return false;
     }
+    public boolean findStripeFrontAdjust(){
+        if(frontLightSensor.getRawLightDetected() >= WHITE_COLOR_CONSTANT_FRONT){
+            backLeftMotor.setPower(0);
+            backRightMotor.setPower(0);
+            frontLeftMotor.setPower(0);
+            frontRightMotor.setPower(0);
+            return true;
+        }
+        else{
+            backLeftMotor.setPower(.1);
+            backRightMotor.setPower(.1);
+            frontLeftMotor.setPower(.1);
+            frontRightMotor.setPower(.1);
+        }
+        return false;
+
+    }
 
     public boolean findStripeBack() {
         if(backLightSensor.getRawLightDetected() >= WHITE_COLOR_CONSTANT_BACK) {
@@ -157,21 +175,21 @@ public class ThatHertzSensorTest extends OpMode {
     }
 
     public boolean hitBeacon(){
-        if(ultrasonicLeft.getUltrasonicLevel() > 15) {
-            frontRightMotor.setPower(-.1);
-            frontLeftMotor.setPower(-.1);
-            backLeftMotor.setPower(-.1);
-            backRightMotor.setPower(-.1);
+        if(ultrasonicLeft.getUltrasonicLevel() > 18) {
+            frontRightMotor.setPower(-.15);
+            frontLeftMotor.setPower(-.15);
+            backLeftMotor.setPower(-.15);
+            backRightMotor.setPower(-.15);
             servoRight.setPosition(0.0);
-            servoLeft.setPosition(0.3);
+            servoLeft.setPosition(0.2);
         }
-        if(ultrasonicLeft.getUltrasonicLevel() <= 15) {
+        if(ultrasonicLeft.getUltrasonicLevel() <= 18) {
             frontRightMotor.setPower(0);
             frontLeftMotor.setPower(0);
             backLeftMotor.setPower(0);
             backLeftMotor.setPower(0);
             
-            servoRight.setPosition(0.3);
+            servoRight.setPosition(0.2);
             servoLeft.setPosition(0.0);
             return true;
         }
@@ -184,7 +202,10 @@ public class ThatHertzSensorTest extends OpMode {
         if(!foundFront) {
             foundFront = findStripeFront();
         }
-        if(foundFront && !foundBack) {
+        if (foundFront && !adjust){
+            adjust = findStripeFrontAdjust();
+        }
+        if(adjust && !foundBack) {
             foundBack = findStripeBack();
         }
         if(foundFront && foundBack && !hitBeaconOne) {
