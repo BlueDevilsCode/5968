@@ -141,7 +141,7 @@ public class ThatHertzSensorTest extends OpMode {
     }
     public boolean findStripeFrontAdjust(){
         try {
-            Thread.sleep(500);
+            Thread.sleep(5000);
 
         }catch(Exception e) {
 
@@ -155,10 +155,10 @@ public class ThatHertzSensorTest extends OpMode {
             return true;
         }
         else{
-            backLeftMotor.setPower(.1);
-            backRightMotor.setPower(.1);
-            frontLeftMotor.setPower(.1);
-            frontRightMotor.setPower(.1);
+            backLeftMotor.setPower(.08);
+            backRightMotor.setPower(.08);
+            frontLeftMotor.setPower(.08);
+            frontRightMotor.setPower(.08);
         }
         return false;
 
