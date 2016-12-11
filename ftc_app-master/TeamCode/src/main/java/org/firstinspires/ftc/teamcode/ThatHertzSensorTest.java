@@ -144,7 +144,7 @@ public class ThatHertzSensorTest extends OpMode {
             Thread.sleep(500);
 
         }catch(Exception e) {
-            
+
         }
 
         if(frontLightSensor.getRawLightDetected() >= WHITE_COLOR_CONSTANT_FRONT){
