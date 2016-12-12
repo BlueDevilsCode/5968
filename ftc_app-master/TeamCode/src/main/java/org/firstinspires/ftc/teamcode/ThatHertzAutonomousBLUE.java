@@ -10,13 +10,15 @@ import com.qualcomm.robotcore.hardware.LegacyModule;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * Created by Sa'id on 11/19/2016.
  */
 
-@Autonomous(name = "[5968] ThatHertz Autonomous RED", group = "Match-Ready")
+@Autonomous(name = "[5968] ThatHertz Autonomous BLUE", group = "Match-Ready")
 public class ThatHertzAutonomousBLUE extends LinearOpMode {
+    ElapsedTime runtime = new ElapsedTime();
 
     //for legacy sensors
     private LegacyModule legacy = null;
@@ -40,6 +42,7 @@ public class ThatHertzAutonomousBLUE extends LinearOpMode {
     //for color sensor
     private ColorSensor color = null;
     static final int LED_CHANNEL = 5;
+    static final int HELPER_LED_CHANNEL = 4;
     float hsvValues[] = {0F, 0F, 0F};
 
     //for wheels
@@ -50,6 +53,7 @@ public class ThatHertzAutonomousBLUE extends LinearOpMode {
 
     private Servo servoRight = null;
     private Servo servoLeft = null;
+    private boolean servosFixed = false;
 
     //for autonomous loop
     private boolean foundBack = false;
@@ -57,6 +61,20 @@ public class ThatHertzAutonomousBLUE extends LinearOpMode {
     private boolean hitBeaconOne = false;
     private boolean choseColor = false;
     private boolean ballHit = false;
+    private boolean forward = false;
+    private boolean jerked = false;
+
+    public boolean moveForwardFast() {
+        if(runtime.time() < .5) {
+            frontLeftMotor.setPower(-.5);
+            frontRightMotor.setPower(-.5);
+            backRightMotor.setPower(-.5);
+            backLeftMotor.setPower(-.5);
+        } else {
+            return true;
+        }
+        return false;
+    }
 
     public boolean findStripeFront() {
         if (frontLightSensor.getRawLightDetected() >= WHITE_COLOR_CONSTANT_FRONT) {
@@ -64,12 +82,13 @@ public class ThatHertzAutonomousBLUE extends LinearOpMode {
             backRightMotor.setPower(0);
             backLeftMotor.setPower(0);
             backRightMotor.setPower(0);
+
             return true;
         } else {
-            backLeftMotor.setPower(-.07);
-            backRightMotor.setPower(-.07);
-            frontLeftMotor.setPower(-.07);
-            frontRightMotor.setPower(-.07);
+            backLeftMotor.setPower(-.1);
+            backRightMotor.setPower(-.1);
+            frontLeftMotor.setPower(-.1);
+            frontRightMotor.setPower(-.1);
         }
         return false;
     }
@@ -92,7 +111,7 @@ public class ThatHertzAutonomousBLUE extends LinearOpMode {
 
     public boolean findColor() {
         try {
-            Thread.sleep(3000);
+            Thread.sleep(2000);
         } catch (Exception e) {}
 
         if(color.blue() < color.red()) {
@@ -158,6 +177,7 @@ public class ThatHertzAutonomousBLUE extends LinearOpMode {
         //for color sensor
         color = hardwareMap.colorSensor.get("color");
         dim.setDigitalChannelMode(LED_CHANNEL, DigitalChannelController.Mode.OUTPUT);
+        dim.setDigitalChannelMode(HELPER_LED_CHANNEL, DigitalChannelController.Mode.OUTPUT);
 
         //for light sensors
         backLightSensor = hardwareMap.lightSensor.get("b_light");
@@ -175,6 +195,7 @@ public class ThatHertzAutonomousBLUE extends LinearOpMode {
         color = hardwareMap.colorSensor.get("color");
         dim.setDigitalChannelMode(LED_CHANNEL, DigitalChannelController.Mode.OUTPUT);
         dim.setDigitalChannelState(LED_CHANNEL, true);
+        dim.setDigitalChannelState(HELPER_LED_CHANNEL, true);
 
         //for light sensors
         backLightSensor = hardwareMap.lightSensor.get("b_light");
@@ -189,10 +210,9 @@ public class ThatHertzAutonomousBLUE extends LinearOpMode {
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         //for servos
-        servoRight = hardwareMap.servo.get("servoRight");
-        servoLeft = hardwareMap.servo.get("servoLeft");
-        servoLeft.setPosition(0);
-        servoRight.setPosition(1);
+        servoRight = hardwareMap.servo.get("r_b_s");
+        servoLeft = hardwareMap.servo.get("l_b_s");
+
 
         GRAY_COLOR_CONSTANT_FRONT = frontLightSensor.getRawLightDetected();
         WHITE_COLOR_CONSTANT_FRONT = GRAY_COLOR_CONSTANT_FRONT + .15;
@@ -201,20 +221,43 @@ public class ThatHertzAutonomousBLUE extends LinearOpMode {
 
         waitForStart();
 
+        runtime.reset();
+
         while(opModeIsActive()) {
-            if (!foundFront) {
+            if(!servosFixed) {
+                servoLeft.setPosition(0);
+                servoRight.setPosition(1);
+                servosFixed = true;
+            }
+            if(!forward) {
+                forward = moveForwardFast();
+            }
+            if (forward && !foundFront) {
                 foundFront = findStripeFront();
             }
-            if (foundFront && !choseColor) {
+//            if(forward && foundFront && !jerked) {r
+//                frontRightMotor.setPower(.1);
+//                backRightMotor.setPower(.1);
+//                backLeftMotor.setPower(.1);
+//                backRightMotor.setPower(.1);
+//
+//                try {
+//                    Thread.sleep(25);
+//                } catch(Exception e) {
+//
+//                }
+//                jerked = true;
+//            }
+            if (forward && foundFront && !choseColor) {
                 choseColor = findColor();
             }
-            if(foundFront && choseColor && !foundBack) {
+            if(forward && foundFront && choseColor && !foundBack) {
                 foundBack = findStripeBack();
             }
-            if (foundFront && foundBack && choseColor && !hitBeaconOne) {
+            if (forward && foundFront && foundBack && choseColor && !hitBeaconOne) {
                 hitBeaconOne = hitBeacon();
             }
-            if(foundFront && foundBack && choseColor && hitBeaconOne && !hitBall()) {
+            if(forward && foundFront && foundBack && choseColor && hitBeaconOne && !hitBall()) {
                 ballHit = hitBall();
             }
 

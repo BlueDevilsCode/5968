@@ -52,6 +52,7 @@ public class ThatHertzAutonomousRED extends LinearOpMode {
 
     private Servo servoRight = null;
     private Servo servoLeft = null;
+    private boolean servosFixed = false;
 
     //for autonomous loop
     private boolean foundBack = false;
@@ -187,10 +188,8 @@ public class ThatHertzAutonomousRED extends LinearOpMode {
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         //for servos
-        servoRight = hardwareMap.servo.get("servoRight");
-        servoLeft = hardwareMap.servo.get("servoLeft");
-        servoLeft.setPosition(0);
-        servoRight.setPosition(1);
+        servoRight = hardwareMap.servo.get("l_b_s");
+        servoLeft = hardwareMap.servo.get("r_b_s");
 
         GRAY_COLOR_CONSTANT_FRONT = frontLightSensor.getRawLightDetected();
         WHITE_COLOR_CONSTANT_FRONT = GRAY_COLOR_CONSTANT_FRONT + .15;
@@ -200,6 +199,10 @@ public class ThatHertzAutonomousRED extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
+            if(!servosFixed) {
+                servoLeft.setPosition(0);
+                servoRight.setPosition(1);
+            }
             if (!foundFront) {
                 foundFront = findStripeFront();
             }
