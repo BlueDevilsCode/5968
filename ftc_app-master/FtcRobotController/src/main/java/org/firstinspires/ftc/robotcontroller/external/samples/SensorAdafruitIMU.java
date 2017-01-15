@@ -102,7 +102,7 @@ public class SensorAdafruitIMU extends LinearOpMode
         waitForStart();
 
         // Start the logging of measured acceleration
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 200);
 
         // Loop and update the dashboard
         while (opModeIsActive()) {

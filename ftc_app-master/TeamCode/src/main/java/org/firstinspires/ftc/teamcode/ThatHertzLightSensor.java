@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -10,22 +11,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name = "ThatHertzLSTest", group = "Testing")
-public class ThatHertzLightSensor extends OpMode {
+public class ThatHertzLightSensor extends LinearOpMode {
     ElapsedTime runtime = new ElapsedTime();
 
     private LightSensor ls = null;
 
-    @Override
-    public void init() {
+    @Override public void runOpMode() {
         ls = hardwareMap.lightSensor.get("l_s");
-    }
 
-    @Override
-    public void start() {runtime.reset();}
+        waitForStart();
+        runtime.reset();
 
-    @Override
-    public void loop() {
-        telemetry.addData("Light Sensor Raw", ls.getRawLightDetected() + "");
-        telemetry.addData("Light Sensor Level", ls.getLightDetected());
+        while (opModeIsActive()) {
+            telemetry.addData("Light Sensor Raw", ls.getRawLightDetected());
+            telemetry.addData("Light Sensor Level", ls.getLightDetected());
+            telemetry.update();
+        }
     }
 }
