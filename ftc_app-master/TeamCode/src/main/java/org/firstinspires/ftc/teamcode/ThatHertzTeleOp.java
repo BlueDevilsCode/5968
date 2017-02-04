@@ -43,8 +43,6 @@ public class ThatHertzTeleOp extends OpMode {
         collection = hardwareMap.dcMotor.get("collection");
 
         //for beacon scoring
-        rightBeaconServo = hardwareMap.servo.get("r_b_s");
-        leftBeaconServo = hardwareMap.servo.get("l_b_s");
 
         rightBeaconServo.setPosition(0); //probably will need changing (especially left)
         leftBeaconServo.setPosition(0);
@@ -101,12 +99,6 @@ public class ThatHertzTeleOp extends OpMode {
             collection.setPower(0);
         }
 
-        //BEACONS
-//        if(gamepad1.left_stick_button && (leftBeaconServo.getPosition() != .75 || leftBeaconServo.getPosition() != 0)) {
-//            leftBeaconServo.setPosition(Math.abs(leftBeaconServo.getPosition() - .75));
-//        } else if(gamepad1.right_stick_button && (rightBeaconServo.getPosition() != .75 || rightBeaconServo.getPosition() != 0)) {
-//            rightBeaconServo.setPosition(Math.abs(rightBeaconServo.getPosition() - .75));
-//        }
         if(gamepad1.right_stick_button) {
             rightBeaconServo.setPosition(.75);
         } else if(gamepad1.left_stick_button) {
