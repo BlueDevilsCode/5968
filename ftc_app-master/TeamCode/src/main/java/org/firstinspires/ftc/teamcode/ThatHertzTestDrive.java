@@ -69,24 +69,24 @@ public class ThatHertzTestDrive extends OpMode {
             backRightMotor.setPower(-.5 * gamepad1.right_stick_y);
             backLeftMotor.setPower(-.5 * gamepad1.right_stick_y);
         } else if (gamepad1.right_stick_x > .3) {
-            frontRightServo.setPosition(.5 - (.5 * (2.0/3.0))-0.1);
-            frontLeftServo.setPosition(.5 + (.5 * (2.0/3.0))+0.1);
-            backRightServo.setPosition(.5 - (.5 * (2.0/3.0))-0.1);
-            backLeftServo.setPosition(.5 + (.5 * (2.0/3.0))+0.1);
+            frontRightServo.setPosition(.5 - (.5 * (2.0/3.0)) - 0.1);
+            frontLeftServo.setPosition(.5 + (.5 * (2.0/3.0)) + 0.1);
+            backRightServo.setPosition(.5 - (.5 * (2.0/3.0)) - 0.1);
+            backLeftServo.setPosition(.5 + (.5 * (2.0/3.0)) + 0.1);
 
             frontRightMotor.setPower(.5 * gamepad1.right_stick_x);
-            frontLeftMotor.setPower(.5 * gamepad1.right_stick_x);
-            backRightMotor.setPower(-.5 * gamepad1.right_stick_x);
-            backLeftMotor.setPower(-.5 * gamepad1.right_stick_x);
-        } else if (gamepad1.right_stick_x < -.3) {
-            frontRightServo.setPosition(.5 - (.5 * (2.0/3.0))-0.1);
-            frontLeftServo.setPosition(.5 + (.5 * (2.0/3.0))+0.1);
-            backRightServo.setPosition(.5 - (.5 * (2.0/3.0))-0.1);
-            backLeftServo.setPosition(.5 + (.5 * (2.0/3.0))+0.1);
-
-            frontRightMotor.setPower(-.5 * gamepad1.right_stick_x);
             frontLeftMotor.setPower(-.5 * gamepad1.right_stick_x);
             backRightMotor.setPower(.5 * gamepad1.right_stick_x);
+            backLeftMotor.setPower(-.5 * gamepad1.right_stick_x);
+        } else if (gamepad1.right_stick_x < -.3) {
+            frontRightServo.setPosition(.5 - (.5 * (2.0/3.0)) - 0.1);
+            frontLeftServo.setPosition(.5 + (.5 * (2.0/3.0)) + 0.1);
+            backRightServo.setPosition(.5 - (.5 * (2.0/3.0)) - 0.1);
+            backLeftServo.setPosition(.5 + (.5 * (2.0/3.0)) + 0.1);
+
+            frontRightMotor.setPower(.5 * gamepad1.right_stick_x);
+            frontLeftMotor.setPower(-.5 * gamepad1.right_stick_x);
+            backRightMotor.setPower(-.5 * gamepad1.right_stick_x);
             backLeftMotor.setPower(.5 * gamepad1.right_stick_x);
         } else if(gamepad1.right_trigger > 0) {
             frontRightMotor.setPower(.5);
