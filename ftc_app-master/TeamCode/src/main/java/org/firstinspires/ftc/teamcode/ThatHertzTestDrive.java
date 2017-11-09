@@ -18,10 +18,12 @@ public class ThatHertzTestDrive extends OpMode {
     private DcMotor backRightMotor;
     private DcMotor backLeftMotor;
 
-    private Servo frontRightServo;
-    private Servo frontLeftServo;
-    private Servo backRightServo;
-    private Servo backLeftServo;
+    private Servo rightServos;
+    private Servo leftServos;
+
+    private Servo rightClaw;
+    private Servo leftClaw;
+    private Servo wrist;
 
     @Override
     public void init() {
@@ -30,15 +32,19 @@ public class ThatHertzTestDrive extends OpMode {
         backRightMotor = hardwareMap.dcMotor.get("brMotor");
         backLeftMotor = hardwareMap.dcMotor.get("blMotor");
 
-        frontRightServo = hardwareMap.servo.get("frServo");
-        frontLeftServo = hardwareMap.servo.get("flServo");
-        backRightServo = hardwareMap.servo.get("brServo");
-        backLeftServo = hardwareMap.servo.get("blServo");
+        rightServos = hardwareMap.servo.get("rServos");
+        leftServos = hardwareMap.servo.get("lServos");
 
-        frontRightServo.setPosition(.5);
-        frontLeftServo.setPosition(.5);
-        backRightServo.setPosition(.5);
-        backLeftServo.setPosition(.5);
+        rightClaw = hardwareMap.servo.get("rClaw");
+        leftClaw = hardwareMap.servo.get("lClaw");
+        wrist = hardwareMap.servo.get("wrist");
+
+        rightServos.setPosition(.5);
+        leftServos.setPosition(.5);
+
+        rightClaw.setPosition(.5);
+        leftClaw.setPosition(.5);
+        wrist.setPosition(0);
 
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -49,40 +55,32 @@ public class ThatHertzTestDrive extends OpMode {
     @Override
     public void loop() {
         if (gamepad1.right_stick_y < 0) {
-            frontRightServo.setPosition(.5);
-            frontLeftServo.setPosition(.5);
-            backRightServo.setPosition(.5);
-            backLeftServo.setPosition(.5);
+            rightServos.setPosition(.5);
+            leftServos.setPosition(.5);
 
             frontRightMotor.setPower(-.5 * gamepad1.right_stick_y);
             frontLeftMotor.setPower(-.5 * gamepad1.right_stick_y);
             backRightMotor.setPower(-.5 * gamepad1.right_stick_y);
             backLeftMotor.setPower(-.5 * gamepad1.right_stick_y);
         } else if (gamepad1.right_stick_y > .3) {
-            frontRightServo.setPosition(.5);
-            frontLeftServo.setPosition(.5);
-            backRightServo.setPosition(.5);
-            backLeftServo.setPosition(.5);
+            rightServos.setPosition(.5);
+            leftServos.setPosition(.5);
 
             frontRightMotor.setPower(-.5 * gamepad1.right_stick_y);
             frontLeftMotor.setPower(-.5 * gamepad1.right_stick_y);
             backRightMotor.setPower(-.5 * gamepad1.right_stick_y);
             backLeftMotor.setPower(-.5 * gamepad1.right_stick_y);
         } else if (gamepad1.right_stick_x > .3) {
-            frontRightServo.setPosition(.5 - (.5 * (2.0/3.0)) - 0.1);
-            frontLeftServo.setPosition(.5 + (.5 * (2.0/3.0)) + 0.1);
-            backRightServo.setPosition(.5 - (.5 * (2.0/3.0)) - 0.1);
-            backLeftServo.setPosition(.5 + (.5 * (2.0/3.0)) + 0.1);
+            rightServos.setPosition(.5 - (.5 * (2.0/3.0)) - 0.1);
+            leftServos.setPosition(.5 + (.5 * (2.0/3.0)) + 0.1);
 
             frontRightMotor.setPower(.5 * gamepad1.right_stick_x);
             frontLeftMotor.setPower(-.5 * gamepad1.right_stick_x);
             backRightMotor.setPower(.5 * gamepad1.right_stick_x);
             backLeftMotor.setPower(-.5 * gamepad1.right_stick_x);
         } else if (gamepad1.right_stick_x < -.3) {
-            frontRightServo.setPosition(.5 - (.5 * (2.0/3.0)) - 0.1);
-            frontLeftServo.setPosition(.5 + (.5 * (2.0/3.0)) + 0.1);
-            backRightServo.setPosition(.5 - (.5 * (2.0/3.0)) - 0.1);
-            backLeftServo.setPosition(.5 + (.5 * (2.0/3.0)) + 0.1);
+            rightServos.setPosition(.5 - (.5 * (2.0/3.0)) - 0.1);
+            leftServos.setPosition(.5 + (.5 * (2.0/3.0)) + 0.1);
 
             frontRightMotor.setPower(.5 * gamepad1.right_stick_x);
             frontLeftMotor.setPower(-.5 * gamepad1.right_stick_x);
