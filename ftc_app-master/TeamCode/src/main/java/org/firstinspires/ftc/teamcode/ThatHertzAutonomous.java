@@ -3,12 +3,19 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-@TeleOp(name = "ThatHertzTestDrive", group = "Tests")
-public class ThatHertzTestDrive extends LinearOpMode {
+
+@TeleOp(name = "ThatHertzAutonomous", group = "Tests")
+public class ThatHertzAutonomous extends LinearOpMode {
 
     VuforiaLocalizer vuforia;
 
@@ -24,8 +31,8 @@ public class ThatHertzTestDrive extends LinearOpMode {
     private Servo leftClaw;
     private Servo wrist;
 
-    @Override
-    public void runOpMode{
+
+    public void runOpMode {
         //Vuforia_Class_FIRST vuforia = new Vuforia_Class_FIRST();
 
         parameters.VuforiaLicenseKey = "Afzt2sX/////AAAAGdAQ8bWAYksyvYrDpJjfLmJ2Fjjz8wm9v0TR/pHdH7q2Hm10l+3xqlxIJ4ePhNqYfmXZQ2Yr72aWbpvjaa6dDqZFO2WpE1PgNF7S3M8aeZAbWEPSXVS7GQFyF8cQHP4fHU+x9PvzFN1RRvL/nSJYH5ThwRA1BeldxsNSj6Lvqju7sYTknBbNIADXpLKL2fHYWFw7HGgEnXT9sfHK4cB5EFBUDx0sI2exPIhioPrbuItTZPkOS+M0wxkv7nvHtrku0Hv2WqY5q3+KNgj1u9ONG0sOy7sAXyGTU/bUSg7a9JBO6jrCulXIPQmxpnkdTCFUhdgmSt7d9upsoYveGVHo78dcwE+hv8inDMxuxM8dTVC2\n"
@@ -59,13 +66,12 @@ public class ThatHertzTestDrive extends LinearOpMode {
         leftClaw.setPosition(.5);
         wrist.setPosition(0);
 
-        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
-        runtime.Reset();
 
         boolean mark_found = false;
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
@@ -81,16 +87,16 @@ public class ThatHertzTestDrive extends LinearOpMode {
         }
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //move according to vumark
-        if(vumark == "Left"){
+        if(vuMark == "Left"){
             while (frontRightMotor.getCurrentPosition() != 100) { //change number to rotation desired
             }
         }
-        else if(vumark == "Right")
+        else if(vuMark == "Right")
             while (frontRightMotor.getCurrentPosition() != 100){
             // do something
         }
-        else if(vumark == "Middle"){
-            while(frontRightMOtor.getCurrentPosition() != 100){
+        else if(vuMark == "Middle"){
+            while(frontRightMotor.getCurrentPosition() != 100){
         }
     }
 }

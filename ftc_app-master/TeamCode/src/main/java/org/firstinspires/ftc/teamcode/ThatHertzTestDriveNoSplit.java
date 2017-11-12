@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by Sa'id on 10/14/2017.
  */
 
+@Disabled
 @TeleOp(name = "ThatHertzTestDriveNoSplit", group = "Tests")
 public class ThatHertzTestDriveNoSplit extends OpMode {
 

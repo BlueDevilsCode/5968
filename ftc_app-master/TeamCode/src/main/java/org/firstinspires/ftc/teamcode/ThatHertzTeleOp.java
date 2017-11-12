@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by Sa'id on 10/14/2017.
  */
 
-@TeleOp(name = "ThatHertzTestDrive", group = "Tests")
-public class ThatHertzTestDrive extends OpMode {
+@TeleOp(name = "ThatHertzTeleOp", group = "Tests")
+public class ThatHertzTeleOp extends OpMode {
 
     private DcMotor frontRightMotor;
     private DcMotor frontLeftMotor;
@@ -116,7 +116,7 @@ public class ThatHertzTestDrive extends OpMode {
         if (gamepad1.dpad_up) {
             elbow.setPower(.4);
         } else if (gamepad1.dpad_down) {
-            elbow.setPower(-.2);
+            elbow.setPower(-.3);
         } else {
             elbow.setPower(0);
         }
