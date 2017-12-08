@@ -31,6 +31,7 @@ public class ThatHertzTeleOp extends OpMode {
     private double negElbowPower = -0.3;
     private double pastPos;
     private double currV;
+    private double timeInit;
 
     @Override
     public void init() {
@@ -118,44 +119,44 @@ public class ThatHertzTeleOp extends OpMode {
             backLeftMotor.setPower(0);
         }
 
-        if (gamepad1.left_trigger > 0) {
+        if (gamepad2.right_trigger > 0) {
             wrist.setPower(1);
         }
-        else if (gamepad1.right_trigger > 0) {
+        else if (gamepad2.left_trigger > 0) {
             wrist.setPower(-1);
         }
         else {
             wrist.setPower(0);
         }
 
-        if (gamepad1.a) {
+        if (gamepad2.a) {
             leftClaw.setPosition(1);
             rightClaw.setPosition(0);
-        } else if (gamepad1.b) {
+        } else if (gamepad2.b) {
             leftClaw.setPosition(.1);
             rightClaw.setPosition(.9);
-        } else if (gamepad1.y) {
+        } else if (gamepad2.y) {
             leftClaw.setPosition(.5);
             rightClaw.setPosition(.5);
         }
 
-        if (gamepad1.dpad_up) {
+        if (gamepad2.dpad_up) {
             elbow.setPower(.3);
             double goalV = 1;
             pastPos = elbow.getCurrentPosition();
             elbow.setPower(posElbowPower);
-            double timeInit = System.nanoTime();
+            timeInit = System.nanoTime();
             currV = (elbow.getCurrentPosition() - pastPos) / ((System.nanoTime() - timeInit) * Math.pow(10, -9));
             if (currV < goalV) {
                 posElbowPower += 0.01;
             } else if (currV > goalV) {
                 negElbowPower -= 0.01;
             }
-        } else if (gamepad1.dpad_down) {
+        } else if (gamepad2.dpad_down) {
             double goalV = -1;
             pastPos = elbow.getCurrentPosition();
             elbow.setPower(negElbowPower);
-            double timeInit = System.nanoTime();
+            timeInit = System.nanoTime();
             currV = (elbow.getCurrentPosition() - pastPos) / ((System.nanoTime() - timeInit) * Math.pow(10, -9));
             if (currV < goalV) {
                 negElbowPower += 0.01;
@@ -169,8 +170,10 @@ public class ThatHertzTeleOp extends OpMode {
 
         telemetry.addData("elbowPower", elbow.getPower());
         telemetry.addData("currTime", System.nanoTime() * Math.pow(10, -9));
+        telemetry.addData("dTime", (System.nanoTime() * Math.pow(10, -9)) - (timeInit * Math.pow(10, -9)));
         telemetry.addData("pastPos", pastPos);
         telemetry.addData("currPos", elbow.getCurrentPosition());
+        telemetry.addData("dPos", elbow.getCurrentPosition() - pastPos);
         telemetry.addData("currV", currV);
         telemetry.update();
     }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by westfield_robotics on 11/12/2017.
  */
 
+@TeleOp(name = "ThatHertzTCTeleOp", group = "TeleOp")
 public class ThatHertzTCTeleOp extends OpMode {
     private DcMotor frontRightMotor;
     private DcMotor frontLeftMotor;
