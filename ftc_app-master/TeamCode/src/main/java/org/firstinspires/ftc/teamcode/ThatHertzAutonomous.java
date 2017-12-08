@@ -21,6 +21,7 @@ public class ThatHertzAutonomous extends LinearOpMode {
     private final double ppr = 1680;
 
     private enum STATE {LOWERARM, MOVEOFFPLATE, STRAFERIGHT, MOVEFORWARD, DONE}
+
     private final double blueLowThreshhold = 0.0; //placeholder
 
     private DcMotor frontRightMotor;
@@ -76,7 +77,7 @@ public class ThatHertzAutonomous extends LinearOpMode {
 
         waitForStart();
 
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
             switch (state) {
                 case LOWERARM:
                     if (touchSensor.isPressed()) {

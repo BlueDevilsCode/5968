@@ -99,19 +99,19 @@ public class ThatHertzTeleOp extends OpMode {
             posDiagServos.setPosition(.5);
             negDiagServos.setPosition(.5);
 
-            frontRightMotor.setPower(-.5  * gamepad1.right_stick_x);
-            frontLeftMotor.setPower(.5 * gamepad1.right_stick_x);
-            backRightMotor.setPower(-.5 * gamepad1.right_stick_x);
-            backLeftMotor.setPower(.5 * gamepad1.right_stick_x);
+            frontRightMotor.setPower(-.5);
+            frontLeftMotor.setPower(.5);
+            backRightMotor.setPower(-.5);
+            backLeftMotor.setPower(.5);
         }
         else if (gamepad1.left_bumper){
             posDiagServos.setPosition(.5);
             negDiagServos.setPosition(.5);
 
-            frontRightMotor.setPower(.5 * gamepad1.right_stick_x);
-            frontLeftMotor.setPower(-.5 * gamepad1.right_stick_x);
-            backRightMotor.setPower(.5 * gamepad1.right_stick_x);
-            backLeftMotor.setPower(-.5 * gamepad1.right_stick_x);
+            frontRightMotor.setPower(.5);
+            frontLeftMotor.setPower(-.5);
+            backRightMotor.setPower(.5);
+            backLeftMotor.setPower(-.5);
         } else {
             frontRightMotor.setPower(0);
             frontLeftMotor.setPower(0);
