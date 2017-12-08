@@ -27,6 +27,11 @@ public class ThatHertzTeleOp extends OpMode {
     private Servo leftClaw;
     private CRServo wrist;
 
+    private double posElbowPower = 0.3;
+    private double negElbowPower = -0.3;
+    private double pastPos;
+    private double currV;
+
     @Override
     public void init() {
         frontRightMotor = hardwareMap.dcMotor.get("frMotor");
@@ -48,10 +53,10 @@ public class ThatHertzTeleOp extends OpMode {
         rightClaw.setPosition(.5);
         leftClaw.setPosition(.5);
 
-        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
     @Override
@@ -135,11 +140,38 @@ public class ThatHertzTeleOp extends OpMode {
         }
 
         if (gamepad1.dpad_up) {
-            elbow.setPower(.4);
+            elbow.setPower(.3);
+            double goalV = 1;
+            pastPos = elbow.getCurrentPosition();
+            elbow.setPower(posElbowPower);
+            double timeInit = System.nanoTime();
+            currV = (elbow.getCurrentPosition() - pastPos) / ((System.nanoTime() - timeInit) * Math.pow(10, -9));
+            if (currV < goalV) {
+                posElbowPower += 0.01;
+            } else if (currV > goalV) {
+                negElbowPower -= 0.01;
+            }
         } else if (gamepad1.dpad_down) {
+            double goalV = -1;
+            pastPos = elbow.getCurrentPosition();
+            elbow.setPower(negElbowPower);
+            double timeInit = System.nanoTime();
+            currV = (elbow.getCurrentPosition() - pastPos) / ((System.nanoTime() - timeInit) * Math.pow(10, -9));
+            if (currV < goalV) {
+                negElbowPower += 0.01;
+            } else if (currV > goalV) {
+                negElbowPower -= 0.01;
+            }
             elbow.setPower(-.3);
         } else {
             elbow.setPower(0);
         }
+
+        telemetry.addData("elbowPower", elbow.getPower());
+        telemetry.addData("currTime", System.nanoTime() * Math.pow(10, -9));
+        telemetry.addData("pastPos", pastPos);
+        telemetry.addData("currPos", elbow.getCurrentPosition());
+        telemetry.addData("currV", currV);
+        telemetry.update();
     }
 }

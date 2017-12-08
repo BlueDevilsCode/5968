@@ -1,109 +1,93 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+/**
+ * Created by westfield_robotics on 12/6/2017.
+ */
 
-
-@TeleOp(name = "ThatHertzAutonomous", group = "Tests")
 public class ThatHertzAutonomous extends LinearOpMode {
 
-    VuforiaLocalizer vuforia;
+    private final double ppr = 1680;
+
+    private enum STATE {ONPLATE, OFFPLATE, DONE}
+    private enum GREYTHRESHHOLD {
+        HIGH(), LOW();
+
+        private double colorValue;
+        GREYTHRESHHOLD(double colorValuePar) {
+            this.colorValue = colorValuePar;
+        }
+    }
 
     private DcMotor frontRightMotor;
     private DcMotor frontLeftMotor;
     private DcMotor backRightMotor;
     private DcMotor backLeftMotor;
 
-    private Servo rightServos;
-    private Servo leftServos;
+    private Servo posDiagServos;
+    private Servo negDiagServos;
 
+    private DcMotor elbow;
     private Servo rightClaw;
     private Servo leftClaw;
-    private Servo wrist;
+    private CRServo wrist;
 
+    private ColorSensor colorSensor;
+    private DeviceInterfaceModule cdim;
 
+    STATE state = STATE.ONPLATE;
+
+    @Override
     public void runOpMode() {
+
         frontRightMotor = hardwareMap.dcMotor.get("frMotor");
         frontLeftMotor = hardwareMap.dcMotor.get("flMotor");
         backRightMotor = hardwareMap.dcMotor.get("brMotor");
         backLeftMotor = hardwareMap.dcMotor.get("blMotor");
 
-        rightServos = hardwareMap.servo.get("rServos");
-        leftServos = hardwareMap.servo.get("lServos");
+        posDiagServos = hardwareMap.servo.get("posServos");
+        negDiagServos = hardwareMap.servo.get("negServos");
 
+        elbow = hardwareMap.dcMotor.get("elbow");
         rightClaw = hardwareMap.servo.get("rClaw");
         leftClaw = hardwareMap.servo.get("lClaw");
-        wrist = hardwareMap.servo.get("wrist");
+        wrist = hardwareMap.crservo.get("wrist");
 
-        rightServos.setPosition(.5);
-        leftServos.setPosition(.5);
+        colorSensor = hardwareMap.colorSensor.get("color");
+        cdim = hardwareMap.deviceInterfaceModule.get("cdim");
+        cdim.setDigitalChannelMode(5, DigitalChannel.Mode.OUTPUT);
+        cdim.setDigitalChannelState(5, true);
 
-        rightClaw.setPosition(.5);
-        leftClaw.setPosition(.5);
-        wrist.setPosition(0);
+        posDiagServos.setPosition(.5);
+        negDiagServos.setPosition(.5);
 
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-
-        parameters.vuforiaLicenseKey = "Afzt2sX/////AAAAGdAQ8bWAYksyvYrDpJjfLmJ2Fjjz8wm9v0TR/pHdH7q2Hm10l+3xqlxIJ4ePhNqYfmXZQ2Yr72aWbpvjaa6dDqZFO2WpE1PgNF7S3M8aeZAbWEPSXVS7GQFyF8cQHP4fHU+x9PvzFN1RRvL/nSJYH5ThwRA1BeldxsNSj6Lvqju7sYTknBbNIADXpLKL2fHYWFw7HGgEnXT9sfHK4cB5EFBUDx0sI2exPIhioPrbuItTZPkOS+M0wxkv7nvHtrku0Hv2WqY5q3+KNgj1u9ONG0sOy7sAXyGTU/bUSg7a9JBO6jrCulXIPQmxpnkdTCFUhdgmSt7d9upsoYveGVHo78dcwE+hv8inDMxuxM8dTVC2\n";
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
-
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
-
         waitForStart();
 
-        relicTrackables.activate();
-
         while(opModeIsActive()) {
+            switch (state) {
+                case ONPLATE:
+                    if (colorSensor.argb() < GREYTHRESHHOLD.HIGH.colorValue || colorSensor.argb() > GREYTHRESHHOLD.LOW.colorValue) {
+                        
+                    }
+                case OFFPLATE:
 
-            boolean mark_found = false;
-            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+                    break;
+                case DONE:
 
-            while (!mark_found) {
-                if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-                    telemetry.addData("VuMark", "%s visible", vuMark);
-                    mark_found = true;
-                }
-
-            }
-            frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            //move according to vumark
-            if (vuMark == RelicRecoveryVuMark.RIGHT)
-                while (frontRightMotor.getCurrentPosition() != 100) {
-                    // do something
-                }
-            else if (vuMark == RelicRecoveryVuMark.CENTER) {
-                while (frontRightMotor.getCurrentPosition() != 100) {
-                }
-            }
-            else if (vuMark == RelicRecoveryVuMark.LEFT) {
-                while (frontRightMotor.getCurrentPosition() != 100) { //change number to rotation desired
-                }
+                    break;
             }
         }
     }
