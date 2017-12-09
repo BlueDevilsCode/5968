@@ -1,25 +1,25 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 /**
- * Created by westfield_robotics on 12/6/2017.
+ * Created by Sa'id on 12/9/2017.
  */
 
-@Autonomous(name = "ThatHertzAutonomous", group = "Autonomous")
-public class ThatHertzAutonomous extends LinearOpMode {
+@Autonomous(name = "ThatHertzExtendedAutonomous", group = "Autonomous")
+@Disabled
+public class ThatHertzExtendedAutonomous extends LinearOpMode {
 
-    private enum STATE {LOWERARM, MOVEOFFPLATE, STRAFERIGHT, MOVEFORWARD, DONE}
-
+    private enum STATE {LOWERKNOCKER, BLUEFOUND, REDFOUND, LOWERARM, MOVEOFFPLATE, STRAFERIGHT, MOVEFORWARD, DONE}
     private final double blueLowThreshhold = 0.0; //placeholder
 
     private DcMotor frontRightMotor;
@@ -35,12 +35,15 @@ public class ThatHertzAutonomous extends LinearOpMode {
     private Servo leftClaw;
     private CRServo wrist;
 
-    private ColorSensor colorSensor;
+    private Servo jewelKnocker;
+
+    private ColorSensorMultiplexer multiplexer;
     private DeviceInterfaceModule cdim;
 
     private TouchSensor touchSensor;
 
     private double initPos;
+    private int[] ports = {0, 3};
 
     @Override
     public void runOpMode() {
@@ -58,15 +61,20 @@ public class ThatHertzAutonomous extends LinearOpMode {
         leftClaw = hardwareMap.servo.get("lClaw");
         wrist = hardwareMap.crservo.get("wrist");
 
-        colorSensor = hardwareMap.colorSensor.get("color");
+        jewelKnocker = hardwareMap.servo.get("jewel");
+
+        multiplexer = new ColorSensorMultiplexer(hardwareMap, "multiplexer", "color", ports, 48, ColorSensorMultiplexer.GAIN_16X);
         cdim = hardwareMap.deviceInterfaceModule.get("cdim");
         cdim.setDigitalChannelMode(5, DigitalChannel.Mode.OUTPUT);
         cdim.setDigitalChannelState(5, true);
+        cdim.setDigitalChannelMode(4, DigitalChannel.Mode.OUTPUT);
+        cdim.setDigitalChannelState(4, true);
 
         touchSensor = hardwareMap.touchSensor.get("touch");
 
         posDiagServos.setPosition(.5);
         negDiagServos.setPosition(.5);
+        jewelKnocker.setPosition(0);
 
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -77,8 +85,48 @@ public class ThatHertzAutonomous extends LinearOpMode {
 
         waitForStart();
 
+        multiplexer.startPolling();
+
         while (opModeIsActive()) {
             switch (state) {
+                case LOWERKNOCKER:
+                    jewelKnocker.setPosition(1);
+                    if (multiplexer.getCRGB(0)[1] < multiplexer.getCRGB(0)[3]) {
+                        state = STATE.BLUEFOUND;
+                    } else {
+                        state = STATE.REDFOUND;
+                    }
+                    break;
+                case BLUEFOUND:
+                    if (Math.abs(frontLeftMotor.getCurrentPosition()) > 135) {
+                        frontRightMotor.setPower(0);
+                        frontLeftMotor.setPower(0);
+                        backRightMotor.setPower(0);
+                        backLeftMotor.setPower(0);
+                        jewelKnocker.setPosition(0);
+                        state = STATE.LOWERARM;
+                        break;
+                    }
+                    frontRightMotor.setPower(-.3);
+                    frontLeftMotor.setPower(-.3);
+                    backRightMotor.setPower(-.3);
+                    backLeftMotor.setPower(-.3);
+                    break;
+                case REDFOUND:
+                    if (Math.abs(frontLeftMotor.getCurrentPosition()) > 135) {
+                        frontRightMotor.setPower(0);
+                        frontLeftMotor.setPower(0);
+                        backRightMotor.setPower(0);
+                        backLeftMotor.setPower(0);
+                        jewelKnocker.setPosition(0);
+                        state = STATE.LOWERARM;
+                        break;
+                    }
+                    frontRightMotor.setPower(.3);
+                    frontLeftMotor.setPower(.3);
+                    backRightMotor.setPower(.3);
+                    backLeftMotor.setPower(.3);
+                    break;
                 case LOWERARM:
                     if (touchSensor.isPressed()) {
                         wrist.setPower(0);
@@ -88,7 +136,7 @@ public class ThatHertzAutonomous extends LinearOpMode {
                     wrist.setPower(1);
                     break;
                 case MOVEOFFPLATE:
-                    if (colorSensor.blue() < blueLowThreshhold) {
+                    if (multiplexer.getCRGB(3)[3] < blueLowThreshhold) {
                         frontRightMotor.setPower(0);
                         frontLeftMotor.setPower(0);
                         backRightMotor.setPower(0);
@@ -129,7 +177,7 @@ public class ThatHertzAutonomous extends LinearOpMode {
                     backLeftMotor.setPower(-.3);
                     break;
                 case MOVEFORWARD:
-                    if (frontLeftMotor.getCurrentPosition() >= initPos + 1610) {
+                    if (frontLeftMotor.getCurrentPosition() >= initPos +  1610) {
                         state = STATE.DONE;
                         break;
                     }

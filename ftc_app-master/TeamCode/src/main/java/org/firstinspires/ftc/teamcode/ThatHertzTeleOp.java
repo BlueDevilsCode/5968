@@ -119,28 +119,28 @@ public class ThatHertzTeleOp extends OpMode {
             backLeftMotor.setPower(0);
         }
 
-        if (gamepad2.right_trigger > 0) {
+        if (gamepad1.right_trigger > 0) {
             wrist.setPower(1);
         }
-        else if (gamepad2.left_trigger > 0) {
+        else if (gamepad1.left_trigger > 0) {
             wrist.setPower(-1);
         }
         else {
             wrist.setPower(0);
         }
 
-        if (gamepad2.a) {
+        if (gamepad1.a) {
             leftClaw.setPosition(1);
             rightClaw.setPosition(0);
-        } else if (gamepad2.b) {
+        } else if (gamepad1.b) {
             leftClaw.setPosition(.1);
             rightClaw.setPosition(.9);
-        } else if (gamepad2.y) {
+        } else if (gamepad1.y) {
             leftClaw.setPosition(.5);
             rightClaw.setPosition(.5);
         }
 
-        if (gamepad2.dpad_up) {
+        if (gamepad1.dpad_up) {
             elbow.setPower(.3);
             double goalV = 1;
             pastPos = elbow.getCurrentPosition();
@@ -152,7 +152,7 @@ public class ThatHertzTeleOp extends OpMode {
             } else if (currV > goalV) {
                 negElbowPower -= 0.01;
             }
-        } else if (gamepad2.dpad_down) {
+        } else if (gamepad1.dpad_down) {
             double goalV = -1;
             pastPos = elbow.getCurrentPosition();
             elbow.setPower(negElbowPower);
