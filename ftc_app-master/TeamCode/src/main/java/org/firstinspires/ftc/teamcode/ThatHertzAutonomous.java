@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 @Autonomous(name = "ThatHertzAutonomous", group = "Autonomous")
 public class ThatHertzAutonomous extends LinearOpMode {
 
-    private enum STATE {LOWERARM, MOVEOFFPLATE, STRAFERIGHT, MOVEFORWARD, DONE}
+    private enum STATE {LOWERCLAWS, MOVEOFFPLATE, STRAFERIGHT, MOVEFORWARD, DONE}
 
     private final double blueLowThreshhold = 0.0; //placeholder
 
@@ -39,8 +39,6 @@ public class ThatHertzAutonomous extends LinearOpMode {
     private DeviceInterfaceModule cdim;
 
     private TouchSensor touchSensor;
-
-    private double initPos;
 
     @Override
     public void runOpMode() {
@@ -73,13 +71,15 @@ public class ThatHertzAutonomous extends LinearOpMode {
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        STATE state = STATE.LOWERARM;
+        double initPos = 0;
+
+        STATE state = STATE.LOWERCLAWS;
 
         waitForStart();
 
         while (opModeIsActive()) {
             switch (state) {
-                case LOWERARM:
+                case LOWERCLAWS:
                     if (touchSensor.isPressed()) {
                         wrist.setPower(0);
                         state = STATE.MOVEOFFPLATE;
@@ -94,7 +94,7 @@ public class ThatHertzAutonomous extends LinearOpMode {
                         backRightMotor.setPower(0);
                         backLeftMotor.setPower(0);
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(500);
                         } catch (InterruptedException e) {}
                         initPos = frontLeftMotor.getCurrentPosition();
                         state = STATE.STRAFERIGHT;
@@ -109,13 +109,13 @@ public class ThatHertzAutonomous extends LinearOpMode {
                     backLeftMotor.setPower(.3);
                     break;
                 case STRAFERIGHT:
-                    if (frontLeftMotor.getCurrentPosition() >= initPos + 805) {
+                    if (frontLeftMotor.getCurrentPosition() >= initPos + 805) { //could be a problem: motor running backwards (negative), probably not though
                         frontRightMotor.setPower(0);
                         frontLeftMotor.setPower(0);
                         backRightMotor.setPower(0);
                         backLeftMotor.setPower(0);
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(500);
                         } catch (InterruptedException e) {}
                         state = STATE.MOVEFORWARD;
                         break;
@@ -128,8 +128,8 @@ public class ThatHertzAutonomous extends LinearOpMode {
                     backRightMotor.setPower(.3);
                     backLeftMotor.setPower(-.3);
                     break;
-                case MOVEFORWARD:
-                    if (frontLeftMotor.getCurrentPosition() >= initPos + 1610) {
+                case MOVEFORWARD: //this could be problematic, apparently we're already like right in front of the scoring region
+                    if (frontLeftMotor.getCurrentPosition() >= initPos + 1075) { //was giving me flak about not having initPos initialized while the other usage was not: could be a problem down the line...
                         state = STATE.DONE;
                         break;
                     }

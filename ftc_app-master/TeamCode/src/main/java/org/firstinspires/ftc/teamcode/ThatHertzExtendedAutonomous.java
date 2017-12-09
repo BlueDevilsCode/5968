@@ -142,7 +142,7 @@ public class ThatHertzExtendedAutonomous extends LinearOpMode {
                         backRightMotor.setPower(0);
                         backLeftMotor.setPower(0);
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(500);
                         } catch (InterruptedException e) {}
                         initPos = frontLeftMotor.getCurrentPosition();
                         state = STATE.STRAFERIGHT;
@@ -163,7 +163,7 @@ public class ThatHertzExtendedAutonomous extends LinearOpMode {
                         backRightMotor.setPower(0);
                         backLeftMotor.setPower(0);
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(500);
                         } catch (InterruptedException e) {}
                         state = STATE.MOVEFORWARD;
                         break;
