@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -20,7 +19,7 @@ public class ThatHertzAutonomous extends LinearOpMode {
 
     private enum STATE {LOWERCLAWS, MOVEOFFPLATE, STRAFERIGHT, MOVEFORWARD, DONE}
 
-    private final double blueLowThreshhold = 0.0; //placeholder
+    private double blueHighThreshhold = 0.0; //placeholder
 
     private DcMotor frontRightMotor;
     private DcMotor frontLeftMotor;
@@ -60,11 +59,15 @@ public class ThatHertzAutonomous extends LinearOpMode {
         cdim = hardwareMap.deviceInterfaceModule.get("cdim");
         cdim.setDigitalChannelMode(5, DigitalChannel.Mode.OUTPUT);
         cdim.setDigitalChannelState(5, true);
+        blueHighThreshhold = colorSensor.blue() + (colorSensor.blue() * 15);
 
         touchSensor = hardwareMap.touchSensor.get("touch");
 
         posDiagServos.setPosition(.5);
         negDiagServos.setPosition(.5);
+
+        rightClaw.setPosition(0);
+        leftClaw.setPosition(1);
 
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -85,10 +88,10 @@ public class ThatHertzAutonomous extends LinearOpMode {
                         state = STATE.MOVEOFFPLATE;
                         break;
                     }
-                    wrist.setPower(1);
+                    wrist.setPower(-1);
                     break;
                 case MOVEOFFPLATE:
-                    if (colorSensor.blue() < blueLowThreshhold) {
+                    if (colorSensor.blue() > blueHighThreshhold) {
                         frontRightMotor.setPower(0);
                         frontLeftMotor.setPower(0);
                         backRightMotor.setPower(0);
@@ -148,6 +151,8 @@ public class ThatHertzAutonomous extends LinearOpMode {
                     backLeftMotor.setPower(0);
                     break;
             }
+            telemetry.addData("Blue", colorSensor.blue());
+            telemetry.update();
         }
     }
 }

@@ -133,27 +133,27 @@ public class ThatHertzTCTeleOp extends OpMode {
             leftClaw.setPosition(1);
             rightClaw.setPosition(0);
         } else if (gamepad2.b) {
-            leftClaw.setPosition(.1);
-            rightClaw.setPosition(.9);
+            leftClaw.setPosition(.3);
+            rightClaw.setPosition(.7);
         } else if (gamepad2.y) {
             leftClaw.setPosition(.5);
             rightClaw.setPosition(.5);
         }
 
-        if (gamepad2.dpad_up) {
-            elbow.setPower(.3);
-            double goalV = 1;
-            pastPos = elbow.getCurrentPosition();
-            elbow.setPower(posElbowPower);
-            timeInit = System.nanoTime();
-            currV = (elbow.getCurrentPosition() - pastPos) / ((System.nanoTime() - timeInit) * Math.pow(10, -9));
-            if (currV < goalV) {
-                posElbowPower += 0.01;
-            } else if (currV > goalV) {
-                negElbowPower -= 0.01;
-            }
-        } else if (gamepad2.dpad_down) {
-            double goalV = -1;
+        if (gamepad2.right_stick_y < -0.1) {
+            elbow.setPower(-gamepad2.right_stick_y * .5);
+//            double goalV = 1;
+//            pastPos = elbow.getCurrentPosition();
+//            elbow.setPower(posElbowPower);
+//            timeInit = System.nanoTime();
+//            currV = (elbow.getCurrentPosition() - pastPos) / ((System.nanoTime() - timeInit) * Math.pow(10, -9));
+//            if (currV < goalV) {
+//                posElbowPower += 0.01;
+//            } else if (currV > goalV) {
+//                negElbowPower -= 0.01;
+//            }
+        } else if (gamepad2.right_stick_y > 0.1) {
+/*            double goalV = -1;
             pastPos = elbow.getCurrentPosition();
             elbow.setPower(negElbowPower);
             timeInit = System.nanoTime();
@@ -162,8 +162,8 @@ public class ThatHertzTCTeleOp extends OpMode {
                 negElbowPower += 0.01;
             } else if (currV > goalV) {
                 negElbowPower -= 0.01;
-            }
-            elbow.setPower(-.3);
+            }*/
+            elbow.setPower(-gamepad2.right_stick_y * .5);
         } else {
             elbow.setPower(0);
         }
