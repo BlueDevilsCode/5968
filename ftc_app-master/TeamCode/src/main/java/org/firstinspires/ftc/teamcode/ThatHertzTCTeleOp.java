@@ -26,8 +26,7 @@ public class ThatHertzTCTeleOp extends OpMode {
     private Servo leftClaw;
     private CRServo wrist;
 
-    private double posElbowPower = 0.3;
-    private double negElbowPower = -0.3;
+    private double elbowPower = 0.3;
     private double pastPos;
     private double currV;
     private double timeInit;
@@ -141,29 +140,27 @@ public class ThatHertzTCTeleOp extends OpMode {
         }
 
         if (gamepad2.right_stick_y < -0.1) {
-            elbow.setPower(-gamepad2.right_stick_y * .5);
-//            double goalV = 1;
-//            pastPos = elbow.getCurrentPosition();
-//            elbow.setPower(posElbowPower);
-//            timeInit = System.nanoTime();
-//            currV = (elbow.getCurrentPosition() - pastPos) / ((System.nanoTime() - timeInit) * Math.pow(10, -9));
-//            if (currV < goalV) {
-//                posElbowPower += 0.01;
-//            } else if (currV > goalV) {
-//                negElbowPower -= 0.01;
-//            }
-        } else if (gamepad2.right_stick_y > 0.1) {
-/*            double goalV = -1;
+            double goalV = 280;
             pastPos = elbow.getCurrentPosition();
-            elbow.setPower(negElbowPower);
+            elbow.setPower(elbowPower);
             timeInit = System.nanoTime();
             currV = (elbow.getCurrentPosition() - pastPos) / ((System.nanoTime() - timeInit) * Math.pow(10, -9));
             if (currV < goalV) {
-                negElbowPower += 0.01;
+                elbowPower += 0.05;
             } else if (currV > goalV) {
-                negElbowPower -= 0.01;
-            }*/
-            elbow.setPower(-gamepad2.right_stick_y * .5);
+                elbowPower -= 0.05;
+            }
+        } else if (gamepad2.right_stick_y > 0.1) {
+            double goalV = -280;
+            pastPos = elbow.getCurrentPosition();
+            elbow.setPower(-elbowPower);
+            timeInit = System.nanoTime();
+            currV = (elbow.getCurrentPosition() - pastPos) / ((System.nanoTime() - timeInit) * Math.pow(10, -9));
+            if (currV > goalV) {
+                elbowPower += 0.05;
+            } else if (currV < goalV) {
+                elbowPower -= 0.05;
+            }
         } else {
             elbow.setPower(0);
         }
