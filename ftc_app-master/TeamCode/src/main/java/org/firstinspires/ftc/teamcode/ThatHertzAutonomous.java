@@ -2,157 +2,145 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 /**
- * Created by westfield_robotics on 12/6/2017.
+ * Created by Sa'id on 1/21/2018.
  */
 
 @Autonomous(name = "ThatHertzAutonomous", group = "Autonomous")
 public class ThatHertzAutonomous extends LinearOpMode {
-
-    private enum STATE {LOWERCLAWS, MOVEOFFPLATE, STRAFERIGHT, MOVEFORWARD, DONE}
-
-    private double blueHighThreshhold = 0.0; //placeholder
+    private enum STATE {KNOCKJEWEL, MOVEOFF, ROTATE, MOVEFORWARD, DRIVECOLLECTOR}
 
     private DcMotor frontRightMotor;
     private DcMotor frontLeftMotor;
     private DcMotor backRightMotor;
     private DcMotor backLeftMotor;
 
-    private Servo posDiagServos;
-    private Servo negDiagServos;
+    private Servo frontRightServo;
+    private Servo backRightServo;
+    private Servo frontLeftServo;
+    private Servo backLeftServo;
 
-    private DcMotor elbow;
-    private Servo rightClaw;
-    private Servo leftClaw;
-    private CRServo wrist;
+    private DcMotor collector;
+
+    private Servo jewelFlipper;
 
     private ColorSensor colorSensor;
     private DeviceInterfaceModule cdim;
 
-    private TouchSensor touchSensor;
+    private STATE state;
 
     @Override
-    public void runOpMode() {
-
+    public void runOpMode() throws InterruptedException {
         frontRightMotor = hardwareMap.dcMotor.get("frMotor");
         frontLeftMotor = hardwareMap.dcMotor.get("flMotor");
         backRightMotor = hardwareMap.dcMotor.get("brMotor");
         backLeftMotor = hardwareMap.dcMotor.get("blMotor");
 
-        posDiagServos = hardwareMap.servo.get("posServos");
-        negDiagServos = hardwareMap.servo.get("negServos");
+        frontRightServo = hardwareMap.servo.get("frServo");
+        backRightServo = hardwareMap.servo.get("brServo");
+        frontLeftServo = hardwareMap.servo.get("flServo");
+        backLeftServo = hardwareMap.servo.get("blServo");
 
-        elbow = hardwareMap.dcMotor.get("elbow");
-        rightClaw = hardwareMap.servo.get("rClaw");
-        leftClaw = hardwareMap.servo.get("lClaw");
-        wrist = hardwareMap.crservo.get("wrist");
-
-        colorSensor = hardwareMap.colorSensor.get("color");
-        cdim = hardwareMap.deviceInterfaceModule.get("cdim");
-        cdim.setDigitalChannelMode(5, DigitalChannel.Mode.OUTPUT);
-        cdim.setDigitalChannelState(5, true);
-        blueHighThreshhold = colorSensor.blue() + (colorSensor.blue() * 15);
-
-        touchSensor = hardwareMap.touchSensor.get("touch");
-
-        posDiagServos.setPosition(.5);
-        negDiagServos.setPosition(.5);
-
-        rightClaw.setPosition(0);
-        leftClaw.setPosition(1);
+        frontRightServo.setPosition(0.5);
+        backRightServo.setPosition(0.5);
+        frontLeftServo.setPosition(0.5);
+        backLeftServo.setPosition(0.5);
 
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        double initPos = 0;
+        collector = hardwareMap.dcMotor.get("collector");
 
-        STATE state = STATE.LOWERCLAWS;
+        jewelFlipper.setPosition(0);
+
+        colorSensor = hardwareMap.colorSensor.get("color");
+        cdim = hardwareMap.deviceInterfaceModule.get("cdim");
+
+
 
         waitForStart();
 
-        while (opModeIsActive()) {
+        double blue = colorSensor.blue();
+
+        while(opModeIsActive()) {
             switch (state) {
-                case LOWERCLAWS:
-                    if (touchSensor.isPressed()) {
-                        wrist.setPower(0);
-                        state = STATE.MOVEOFFPLATE;
-                        break;
-                    }
-                    wrist.setPower(-1);
-                    break;
-                case MOVEOFFPLATE:
-                    if (colorSensor.blue() > blueHighThreshhold) {
-                        frontRightMotor.setPower(0);
-                        frontLeftMotor.setPower(0);
-                        backRightMotor.setPower(0);
-                        backLeftMotor.setPower(0);
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {}
-                        initPos = frontLeftMotor.getCurrentPosition();
-                        state = STATE.STRAFERIGHT;
-                        break;
-                    }
-                    posDiagServos.setPosition(.5);
-                    negDiagServos.setPosition(.5);
+                case KNOCKJEWEL:
+                    jewelFlipper.setPosition(1);
 
-                    frontRightMotor.setPower(.3);
-                    frontLeftMotor.setPower(.3);
-                    backRightMotor.setPower(.3);
-                    backLeftMotor.setPower(.3);
-                    break;
-                case STRAFERIGHT:
-                    if (frontLeftMotor.getCurrentPosition() >= initPos + 805) { //could be a problem: motor running backwards (negative), probably not though
-                        frontRightMotor.setPower(0);
-                        frontLeftMotor.setPower(0);
-                        backRightMotor.setPower(0);
-                        backLeftMotor.setPower(0);
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {}
-                        state = STATE.MOVEFORWARD;
-                        break;
+                    if (jewelFlipper.getPosition() == 1) {
+                        if (colorSensor.blue() > colorSensor.red()) {
+                            if (backRightMotor.getCurrentPosition() < 840) {
+                                frontRightMotor.setPower(.5);
+                                frontLeftMotor.setPower(-.5);
+                                backRightMotor.setPower(.5);
+                                backLeftMotor.setPower(-.5);
+                            } else {
+                                frontRightMotor.setPower(0);
+                                frontLeftMotor.setPower(0);
+                                backRightMotor.setPower(0);
+                                backLeftMotor.setPower(0);
+                            }
+                            jewelFlipper.setPosition(0);
+                            if (backRightMotor.getCurrentPosition() < 1680) {
+                                    frontRightMotor.setPower(-.5);
+                                    frontLeftMotor.setPower(.5);
+                                    backRightMotor.setPower(-.5);
+                                    backLeftMotor.setPower(.5);
+                                } else {
+                                    frontRightMotor.setPower(0);
+                                    frontLeftMotor.setPower(0);
+                                    backRightMotor.setPower(0);
+                                    backLeftMotor.setPower(0);
+                                }
+                            } else {
+                            if (backRightMotor.getCurrentPosition() < 840) {
+                                frontRightMotor.setPower(-.5);
+                                frontLeftMotor.setPower(.5);
+                                backRightMotor.setPower(-.5);
+                                backLeftMotor.setPower(.5);
+                            } else {
+                                frontRightMotor.setPower(0);
+                                frontLeftMotor.setPower(0);
+                                backRightMotor.setPower(0);
+                                backLeftMotor.setPower(0);
+                            }
+                            jewelFlipper.setPosition(0);
+                            if (backRightMotor.getCurrentPosition() < 1680) {
+                                    frontRightMotor.setPower(.5);
+                                    frontLeftMotor.setPower(-.5);
+                                    backRightMotor.setPower(.5);
+                                    backLeftMotor.setPower(-.5);
+                            } else {
+                                frontRightMotor.setPower(0);
+                                frontLeftMotor.setPower(0);
+                                backRightMotor.setPower(0);
+                                backLeftMotor.setPower(0);
+                            }
+                        }
                     }
-                    posDiagServos.setPosition(.5 + (.5 * (2.0 / 3.0)));
-                    negDiagServos.setPosition(.5 - (.5 * (2.0 / 3.0)));
-
-                    frontRightMotor.setPower(-.3);
-                    frontLeftMotor.setPower(.3);
-                    backRightMotor.setPower(.3);
-                    backLeftMotor.setPower(-.3);
                     break;
-                case MOVEFORWARD: //this could be problematic, apparently we're already like right in front of the scoring region
-                    if (frontLeftMotor.getCurrentPosition() >= initPos + 1075) { //was giving me flak about not having initPos initialized while the other usage was not: could be a problem down the line...
-                        state = STATE.DONE;
-                        break;
+                case MOVEOFF:
+                    while(colorSensor.blue() >= (blue *.75) ) {
+                        frontRightMotor.setPower(.5);
+                        frontLeftMotor.setPower(.5);
+                        backRightMotor.setPower(.5);
+                        backLeftMotor.setPower(.5);
                     }
-                    posDiagServos.setPosition(.5);
-                    negDiagServos.setPosition(.5);
-
-                    frontRightMotor.setPower(.3);
-                    frontLeftMotor.setPower(.3);
-                    backRightMotor.setPower(.3);
-                    backLeftMotor.setPower(.3);
                     break;
-                case DONE:
-                    frontRightMotor.setPower(0);
-                    frontLeftMotor.setPower(0);
-                    backRightMotor.setPower(0);
-                    backLeftMotor.setPower(0);
+                case ROTATE:
+                    break;
+                case MOVEFORWARD:
+                    break;
+                case DRIVECOLLECTOR:
                     break;
             }
-            telemetry.addData("Blue", colorSensor.blue());
-            telemetry.update();
         }
     }
 }

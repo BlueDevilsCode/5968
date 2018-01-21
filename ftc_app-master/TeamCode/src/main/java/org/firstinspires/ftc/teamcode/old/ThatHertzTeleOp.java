@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.old;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,11 +8,12 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
- * Created by westfield_robotics on 11/12/2017.
+ * Created by Sa'id on 10/14/2017.
  */
 
-@TeleOp(name = "ThatHertzTCTeleOp", group = "TeleOp")
-public class ThatHertzTCTeleOp extends OpMode {
+@TeleOp(name = "ThatHertzTeleOp", group = "Tests")
+public class ThatHertzTeleOp extends OpMode {
+
     private DcMotor frontRightMotor;
     private DcMotor frontLeftMotor;
     private DcMotor backRightMotor;
@@ -26,7 +27,8 @@ public class ThatHertzTCTeleOp extends OpMode {
     private Servo leftClaw;
     private CRServo wrist;
 
-    private double elbowPower = 0.3;
+    private double posElbowPower = 0.3;
+    private double negElbowPower = -0.3;
     private double pastPos;
     private double currV;
     private double timeInit;
@@ -51,15 +53,15 @@ public class ThatHertzTCTeleOp extends OpMode {
 
         rightClaw.setPosition(.5);
         leftClaw.setPosition(.5);
-        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
     @Override
     public void loop() {
-        //MOVEMENT CONTROLS | GAMEPAD1\\
         if (gamepad1.right_stick_y < -.2) {
             posDiagServos.setPosition(.5);
             negDiagServos.setPosition(.5);
@@ -117,50 +119,51 @@ public class ThatHertzTCTeleOp extends OpMode {
             backLeftMotor.setPower(0);
         }
 
-        //ARM CONTROLS | GAMEPAD2\\
-        if (gamepad2.right_trigger > 0) {
+        if (gamepad1.right_trigger > 0) {
             wrist.setPower(1);
         }
-        else if (gamepad2.left_trigger > 0) {
+        else if (gamepad1.left_trigger > 0) {
             wrist.setPower(-1);
         }
         else {
             wrist.setPower(0);
         }
 
-        if (gamepad2.a) {
+        if (gamepad1.a) {
             leftClaw.setPosition(1);
             rightClaw.setPosition(0);
-        } else if (gamepad2.b) {
-            leftClaw.setPosition(.3);
-            rightClaw.setPosition(.7);
-        } else if (gamepad2.y) {
+        } else if (gamepad1.b) {
+            leftClaw.setPosition(.1);
+            rightClaw.setPosition(.9);
+        } else if (gamepad1.y) {
             leftClaw.setPosition(.5);
             rightClaw.setPosition(.5);
         }
 
-        if (gamepad2.right_stick_y < -0.1) {
-            double goalV = 280;
+        if (gamepad1.dpad_up) {
+            elbow.setPower(.3);
+            double goalV = 1;
             pastPos = elbow.getCurrentPosition();
-            elbow.setPower(elbowPower);
+            elbow.setPower(posElbowPower);
             timeInit = System.nanoTime();
             currV = (elbow.getCurrentPosition() - pastPos) / ((System.nanoTime() - timeInit) * Math.pow(10, -9));
             if (currV < goalV) {
-                elbowPower += 0.05;
+                posElbowPower += 0.01;
             } else if (currV > goalV) {
-                elbowPower -= 0.05;
+                negElbowPower -= 0.01;
             }
-        } else if (gamepad2.right_stick_y > 0.1) {
-            double goalV = -280;
+        } else if (gamepad1.dpad_down) {
+            double goalV = -1;
             pastPos = elbow.getCurrentPosition();
-            elbow.setPower(-elbowPower);
+            elbow.setPower(negElbowPower);
             timeInit = System.nanoTime();
             currV = (elbow.getCurrentPosition() - pastPos) / ((System.nanoTime() - timeInit) * Math.pow(10, -9));
-            if (currV > goalV) {
-                elbowPower += 0.05;
-            } else if (currV < goalV) {
-                elbowPower -= 0.05;
+            if (currV < goalV) {
+                negElbowPower += 0.01;
+            } else if (currV > goalV) {
+                negElbowPower -= 0.01;
             }
+            elbow.setPower(-.3);
         } else {
             elbow.setPower(0);
         }
@@ -174,5 +177,4 @@ public class ThatHertzTCTeleOp extends OpMode {
         telemetry.addData("currV", currV);
         telemetry.update();
     }
-
 }

@@ -2,16 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
- * Created by Sa'id on 10/14/2017.
+ * Created by Sa'id on 1/14/2018.
  */
 
-@TeleOp(name = "ThatHertzTeleOp", group = "Tests")
+@TeleOp(name = "ThatHertzTeleOp", group = "TeleOp")
 public class ThatHertzTeleOp extends OpMode {
 
     private DcMotor frontRightMotor;
@@ -19,40 +17,35 @@ public class ThatHertzTeleOp extends OpMode {
     private DcMotor backRightMotor;
     private DcMotor backLeftMotor;
 
-    private Servo posDiagServos;
-    private Servo negDiagServos;
+    private Servo frontRightServo;
+    private Servo backRightServo;
+    private Servo frontLeftServo;
+    private Servo backLeftServo;
 
-    private DcMotor elbow;
-    private Servo rightClaw;
-    private Servo leftClaw;
-    private CRServo wrist;
+    private DcMotor collector;
+    private DcMotor leftSlide;
+    private DcMotor rightSlide;
+    private DcMotor rotator;
 
-    private double posElbowPower = 0.3;
-    private double negElbowPower = -0.3;
-    private double pastPos;
-    private double currV;
-    private double timeInit;
-
-    @Override
     public void init() {
         frontRightMotor = hardwareMap.dcMotor.get("frMotor");
         frontLeftMotor = hardwareMap.dcMotor.get("flMotor");
         backRightMotor = hardwareMap.dcMotor.get("brMotor");
         backLeftMotor = hardwareMap.dcMotor.get("blMotor");
 
-        posDiagServos = hardwareMap.servo.get("posServos");
-        negDiagServos = hardwareMap.servo.get("negServos");
+        frontRightServo = hardwareMap.servo.get("frServo");
+        backRightServo = hardwareMap.servo.get("brServo");
+        frontLeftServo = hardwareMap.servo.get("flServo");
+        backLeftServo = hardwareMap.servo.get("blServo");
 
-        elbow = hardwareMap.dcMotor.get("elbow");
-        rightClaw = hardwareMap.servo.get("rClaw");
-        leftClaw = hardwareMap.servo.get("lClaw");
-        wrist = hardwareMap.crservo.get("wrist");
+        collector = hardwareMap.dcMotor.get("collector");
+        leftSlide = hardwareMap.dcMotor.get("lSlide");
+        rightSlide = hardwareMap.dcMotor.get("rSlide");
+        rotator = hardwareMap.dcMotor.get("rotator");
 
-        posDiagServos.setPosition(.5);
-        negDiagServos.setPosition(.5);
-
-        rightClaw.setPosition(.5);
-        leftClaw.setPosition(.5);
+        frontRightServo.setPosition(0.5);
+        backRightServo.setPosition(0.5);
+        frontLeftServo.setPosition(0.5);
 
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -60,35 +53,42 @@ public class ThatHertzTeleOp extends OpMode {
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
-    @Override
     public void loop() {
         if (gamepad1.right_stick_y < -.2) {
-            posDiagServos.setPosition(.5);
-            negDiagServos.setPosition(.5);
+            frontRightServo.setPosition(0.5);
+            backRightServo.setPosition(0.5);
+            frontLeftServo.setPosition(0.5);
+            backLeftServo.setPosition(0.5);
 
             frontRightMotor.setPower(-.5 * gamepad1.right_stick_y);
             frontLeftMotor.setPower(-.5 * gamepad1.right_stick_y);
             backRightMotor.setPower(-.5 * gamepad1.right_stick_y);
             backLeftMotor.setPower(-.5 * gamepad1.right_stick_y);
         } else if (gamepad1.right_stick_y > .2) {
-            posDiagServos.setPosition(.5);
-            negDiagServos.setPosition(.5);
+            frontRightServo.setPosition(0.5);
+            backRightServo.setPosition(0.5);
+            frontLeftServo.setPosition(0.5);
+            backLeftServo.setPosition(0.5);
 
             frontRightMotor.setPower(-.5 * gamepad1.right_stick_y);
             frontLeftMotor.setPower(-.5 * gamepad1.right_stick_y);
             backRightMotor.setPower(-.5 * gamepad1.right_stick_y);
             backLeftMotor.setPower(-.5 * gamepad1.right_stick_y);
         } else if (gamepad1.right_stick_x > .2) {
-            posDiagServos.setPosition(.5 + (.5 * (2.0 / 3.0)));
-            negDiagServos.setPosition(.5 - (.5 * (2.0 / 3.0)));
+            frontRightServo.setPosition(.5 - (.5 * (1.0 / 2.0)));
+            backRightServo.setPosition(.5 + (.5 * (1.0 / 2.0)));
+            frontLeftServo.setPosition(.5 + (.5 * (1.0 / 2.0)));
+            backLeftServo.setPosition(.5 - (.5 * (1.0 / 2.0)));
 
             frontRightMotor.setPower(-.5 * gamepad1.right_stick_x);
             frontLeftMotor.setPower(.5 * gamepad1.right_stick_x);
             backRightMotor.setPower(.5 * gamepad1.right_stick_x);
             backLeftMotor.setPower(-.5 * gamepad1.right_stick_x);
         } else if (gamepad1.right_stick_x < -.2) {
-            posDiagServos.setPosition(.5 + (.5 * (2.0 / 3.0)));
-            negDiagServos.setPosition(.5 - (.5 * (2.0 / 3.0)));
+            frontRightServo.setPosition(.5 - (.5 * (1.0 / 2.0)));
+            backRightServo.setPosition(.5 + (.5 * (1.0 / 2.0)));
+            frontLeftServo.setPosition(.5 + (.5 * (1.0 / 2.0)));
+            backLeftServo.setPosition(.5 - (.5 * (1.0 / 2.0)));
 
             frontRightMotor.setPower(-.5 * gamepad1.right_stick_x);
             frontLeftMotor.setPower(.5 * gamepad1.right_stick_x);
@@ -96,8 +96,10 @@ public class ThatHertzTeleOp extends OpMode {
             backLeftMotor.setPower(-.5 * gamepad1.right_stick_x);
         }
         else if (gamepad1.right_bumper){
-            posDiagServos.setPosition(.5);
-            negDiagServos.setPosition(.5);
+            frontRightServo.setPosition(0.5);
+            backRightServo.setPosition(0.5);
+            frontLeftServo.setPosition(0.5);
+            backLeftServo.setPosition(0.5);
 
             frontRightMotor.setPower(-.5);
             frontLeftMotor.setPower(.5);
@@ -105,8 +107,10 @@ public class ThatHertzTeleOp extends OpMode {
             backLeftMotor.setPower(.5);
         }
         else if (gamepad1.left_bumper){
-            posDiagServos.setPosition(.5);
-            negDiagServos.setPosition(.5);
+            frontRightServo.setPosition(0.5);
+            backRightServo.setPosition(0.5);
+            frontLeftServo.setPosition(0.5);
+            backLeftServo.setPosition(0.5);
 
             frontRightMotor.setPower(.5);
             frontLeftMotor.setPower(-.5);
@@ -119,62 +123,29 @@ public class ThatHertzTeleOp extends OpMode {
             backLeftMotor.setPower(0);
         }
 
-        if (gamepad1.right_trigger > 0) {
-            wrist.setPower(1);
-        }
-        else if (gamepad1.left_trigger > 0) {
-            wrist.setPower(-1);
-        }
-        else {
-            wrist.setPower(0);
-        }
-
-        if (gamepad1.a) {
-            leftClaw.setPosition(1);
-            rightClaw.setPosition(0);
-        } else if (gamepad1.b) {
-            leftClaw.setPosition(.1);
-            rightClaw.setPosition(.9);
-        } else if (gamepad1.y) {
-            leftClaw.setPosition(.5);
-            rightClaw.setPosition(.5);
-        }
-
-        if (gamepad1.dpad_up) {
-            elbow.setPower(.3);
-            double goalV = 1;
-            pastPos = elbow.getCurrentPosition();
-            elbow.setPower(posElbowPower);
-            timeInit = System.nanoTime();
-            currV = (elbow.getCurrentPosition() - pastPos) / ((System.nanoTime() - timeInit) * Math.pow(10, -9));
-            if (currV < goalV) {
-                posElbowPower += 0.01;
-            } else if (currV > goalV) {
-                negElbowPower -= 0.01;
-            }
-        } else if (gamepad1.dpad_down) {
-            double goalV = -1;
-            pastPos = elbow.getCurrentPosition();
-            elbow.setPower(negElbowPower);
-            timeInit = System.nanoTime();
-            currV = (elbow.getCurrentPosition() - pastPos) / ((System.nanoTime() - timeInit) * Math.pow(10, -9));
-            if (currV < goalV) {
-                negElbowPower += 0.01;
-            } else if (currV > goalV) {
-                negElbowPower -= 0.01;
-            }
-            elbow.setPower(-.3);
+        if(gamepad2.dpad_up) {
+            rightSlide.setPower(-.75);
+            leftSlide.setPower(.75);
+        } else if (gamepad2.dpad_down) {
+            rightSlide.setPower(.75);
+            leftSlide.setPower(-.75);
         } else {
-            elbow.setPower(0);
+            rightSlide.setPower(0);
+            leftSlide.setPower(0);
         }
 
-        telemetry.addData("elbowPower", elbow.getPower());
-        telemetry.addData("currTime", System.nanoTime() * Math.pow(10, -9));
-        telemetry.addData("dTime", (System.nanoTime() * Math.pow(10, -9)) - (timeInit * Math.pow(10, -9)));
-        telemetry.addData("pastPos", pastPos);
-        telemetry.addData("currPos", elbow.getCurrentPosition());
-        telemetry.addData("dPos", elbow.getCurrentPosition() - pastPos);
-        telemetry.addData("currV", currV);
-        telemetry.update();
+        if (gamepad2.right_stick_y < -.2) {
+            rotator.setPower(-1);
+        } else if (gamepad2.right_stick_y > .2) {
+            rotator.setPower(1);
+        } else {
+            rotator.setPower(0);
+        }
+
+        if (gamepad2.a) {
+            collector.setPower(1);
+        } else {
+            collector.setPower(0);
+        }
     }
 }
