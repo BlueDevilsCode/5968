@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name = "ThatHertzAutonomous", group = "Autonomous")
 public class ThatHertzAutonomous extends LinearOpMode {
-    private enum STATE {KNOCKJEWEL, MOVEOFF, ROTATE, MOVEFORWARD, DRIVECOLLECTOR}
+    private enum STATE {KNOCKJEWEL, MOVEOFF, MOVERIGHT, MOVEFORWARD, DRIVECOLLECTOR}
 
     private DcMotor frontRightMotor;
     private DcMotor frontLeftMotor;
@@ -30,9 +30,12 @@ public class ThatHertzAutonomous extends LinearOpMode {
     private Servo jewelFlipper;
 
     private ColorSensor colorSensor;
+    private ColorSensor jewelColorSensor;
     private DeviceInterfaceModule cdim;
 
     private STATE state;
+
+    private double motorPos;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -61,9 +64,8 @@ public class ThatHertzAutonomous extends LinearOpMode {
         jewelFlipper.setPosition(0);
 
         colorSensor = hardwareMap.colorSensor.get("color");
+        jewelColorSensor = hardwareMap.colorSensor.get("jColor");
         cdim = hardwareMap.deviceInterfaceModule.get("cdim");
-
-
 
         waitForStart();
 
@@ -75,8 +77,8 @@ public class ThatHertzAutonomous extends LinearOpMode {
                     jewelFlipper.setPosition(1);
 
                     if (jewelFlipper.getPosition() == 1) {
-                        if (colorSensor.blue() > colorSensor.red()) {
-                            if (backRightMotor.getCurrentPosition() < 840) {
+                        if (jewelColorSensor.blue() > jewelColorSensor.red()) {
+                            if (backRightMotor.getCurrentPosition() < 180) {
                                 frontRightMotor.setPower(.5);
                                 frontLeftMotor.setPower(-.5);
                                 backRightMotor.setPower(.5);
@@ -88,7 +90,7 @@ public class ThatHertzAutonomous extends LinearOpMode {
                                 backLeftMotor.setPower(0);
                             }
                             jewelFlipper.setPosition(0);
-                            if (backRightMotor.getCurrentPosition() < 1680) {
+                            if (backRightMotor.getCurrentPosition() < 360) {
                                     frontRightMotor.setPower(-.5);
                                     frontLeftMotor.setPower(.5);
                                     backRightMotor.setPower(-.5);
@@ -100,45 +102,92 @@ public class ThatHertzAutonomous extends LinearOpMode {
                                     backLeftMotor.setPower(0);
                                 }
                             } else {
-                            if (backRightMotor.getCurrentPosition() < 840) {
-                                frontRightMotor.setPower(-.5);
-                                frontLeftMotor.setPower(.5);
-                                backRightMotor.setPower(-.5);
-                                backLeftMotor.setPower(.5);
-                            } else {
-                                frontRightMotor.setPower(0);
-                                frontLeftMotor.setPower(0);
-                                backRightMotor.setPower(0);
-                                backLeftMotor.setPower(0);
-                            }
-                            jewelFlipper.setPosition(0);
-                            if (backRightMotor.getCurrentPosition() < 1680) {
-                                    frontRightMotor.setPower(.5);
-                                    frontLeftMotor.setPower(-.5);
-                                    backRightMotor.setPower(.5);
-                                    backLeftMotor.setPower(-.5);
-                            } else {
-                                frontRightMotor.setPower(0);
-                                frontLeftMotor.setPower(0);
-                                backRightMotor.setPower(0);
-                                backLeftMotor.setPower(0);
-                            }
+                                if (backRightMotor.getCurrentPosition() < 180) {
+                                    frontRightMotor.setPower(-.5);
+                                    frontLeftMotor.setPower(.5);
+                                    backRightMotor.setPower(-.5);
+                                    backLeftMotor.setPower(.5);
+                                } else {
+                                    frontRightMotor.setPower(0);
+                                    frontLeftMotor.setPower(0);
+                                    backRightMotor.setPower(0);
+                                    backLeftMotor.setPower(0);
+                                }
+                                jewelFlipper.setPosition(0);
+                                if (backRightMotor.getCurrentPosition() < 360) {
+                                        frontRightMotor.setPower(.5);
+                                        frontLeftMotor.setPower(-.5);
+                                        backRightMotor.setPower(.5);
+                                        backLeftMotor.setPower(-.5);
+                                } else {
+                                    frontRightMotor.setPower(0);
+                                    frontLeftMotor.setPower(0);
+                                    backRightMotor.setPower(0);
+                                    backLeftMotor.setPower(0);
+                                }
                         }
                     }
                     break;
                 case MOVEOFF:
-                    while(colorSensor.blue() >= (blue *.75) ) {
+                    if (colorSensor.blue() >= (blue * .75) ) {
+                        frontRightServo.setPosition(.5 - (.5 * (1.0 / 2.0)));
+                        backRightServo.setPosition(.5 + (.5 * (1.0 / 2.0)));
+                        frontLeftServo.setPosition(.5 + (.5 * (1.0 / 2.0)));
+                        backLeftServo.setPosition(.5 - (.5 * (1.0 / 2.0)));
+
+                        frontRightMotor.setPower(-.5);
+                        frontLeftMotor.setPower(.5);
+                        backRightMotor.setPower(.5);
+                        backLeftMotor.setPower(-.5);
+                    }
+                    motorPos = backRightMotor.getCurrentPosition();
+                case MOVERIGHT:
+                    if (frontRightMotor.getCurrentPosition() < motorPos + 840) {
+                        frontRightServo.setPosition(.5 - (.5 * (1.0 / 2.0)));
+                        backRightServo.setPosition(.5 + (.5 * (1.0 / 2.0)));
+                        frontLeftServo.setPosition(.5 + (.5 * (1.0 / 2.0)));
+                        backLeftServo.setPosition(.5 - (.5 * (1.0 / 2.0)));
+
+                        frontRightMotor.setPower(-.5);
+                        frontLeftMotor.setPower(.5);
+                        backRightMotor.setPower(.5);
+                        backLeftMotor.setPower(-.5);
+                    } else {
+                        frontRightServo.setPosition(.5);
+                        backRightServo.setPosition(.5);
+                        frontLeftServo.setPosition(.5);
+                        backLeftServo.setPosition(.5);
+
+                        frontRightMotor.setPower(0);
+                        frontLeftMotor.setPower(0);
+                        backRightMotor.setPower(0);
+                        backLeftMotor.setPower(0);
+                    }
+                    break;
+                case MOVEFORWARD:
+                    if (frontRightMotor.getCurrentPosition() < motorPos + 1110) {
+                        frontRightServo.setPosition(0.5);
+                        backRightServo.setPosition(0.5);
+                        frontLeftServo.setPosition(0.5);
+                        backLeftServo.setPosition(0.5);
+
                         frontRightMotor.setPower(.5);
                         frontLeftMotor.setPower(.5);
                         backRightMotor.setPower(.5);
                         backLeftMotor.setPower(.5);
                     }
-                    break;
-                case ROTATE:
-                    break;
-                case MOVEFORWARD:
+                    frontRightServo.setPosition(0.5);
+                    backRightServo.setPosition(0.5);
+                    frontLeftServo.setPosition(0.5);
+                    backLeftServo.setPosition(0.5);
+
+                    frontRightMotor.setPower(0);
+                    frontLeftMotor.setPower(0);
+                    backRightMotor.setPower(0);
+                    backLeftMotor.setPower(0);
                     break;
                 case DRIVECOLLECTOR:
+                    collector.setPower(-1);
                     break;
             }
         }

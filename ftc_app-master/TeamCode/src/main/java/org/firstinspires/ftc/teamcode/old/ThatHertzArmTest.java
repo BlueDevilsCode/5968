@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.old;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * Created by westfield_robotics on 12/16/2017.
  */
 
+@Disabled
 @TeleOp(name = "ThatHertzArmTest", group = "Test")
 public class ThatHertzArmTest extends OpMode {
 

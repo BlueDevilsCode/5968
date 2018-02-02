@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.old;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -14,6 +15,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
  * Created by westfield_robotics on 12/6/2017.
  */
 
+@Disabled
 @Autonomous(name = "ThatHertzAutonomous", group = "Autonomous")
 public class ThatHertzAutonomous extends LinearOpMode {
 
